@@ -1,0 +1,15 @@
+# system
+.DS_Store
+Thumbs.db
+
+# eclipse
+/.settings
+/.buildpath
+/.project
+
+/vendor
+/app/cache/*
+/app/logs/*
+
+# to keep empty directories in the repository, place an empty '.gitkeep' file inside it
+!.gitkeep
