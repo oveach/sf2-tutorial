@@ -22,8 +22,10 @@ Create the following virtual host entry:
         </Directory>
     </VirtualHost>
 
-Keep the dependencies up to date
---------------------------------
-To update the vendors :
+###Permissions
+Don't forget to let the folders app/cache and app/logs writable by your webserver:
 
-    php composer.phar update
+    chgrp -R www-data app/cache/
+    chgrp -R www-data app/logs/
+
+Browse this page to check the config: http://sf2-tutorial.localhost/config.php

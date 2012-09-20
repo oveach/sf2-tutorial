@@ -7,7 +7,6 @@ Thumbs.db
 /.buildpath
 /.project
 
-/composer.lock
 /vendor
 /app/cache/*
 /app/logs/*
