@@ -5,9 +5,8 @@ Symfony2 tutorial application based on the ZF2 tutorial by Rob Allen (see https:
 
 Install
 -------
-After cloning project from git, install dependencies (called "vendors") with the following command line:
-
-    php composer.phar install
+Composer does not work very well with Symfony, so do not use it. That's why vendor directory is included 
+in the repository.
 
 ###Apache config:
 Create the following virtual host entry:
