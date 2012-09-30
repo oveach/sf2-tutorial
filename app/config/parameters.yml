@@ -2,14 +2,14 @@ parameters:
     database_driver:   pdo_mysql
     database_host:     localhost
     database_port:     ~
-    database_name:     symfony
+    database_name:     sf2tutorial
     database_user:     root
-    database_password: ~
+    database_password: root
 
     mailer_transport:  smtp
     mailer_host:       localhost
     mailer_user:       ~
     mailer_password:   ~
 
-    locale:            en
-    secret:            ThisTokenIsNotSoSecretChangeIt
+    locale:            fr
+    secret:            b818f56b8eff5074e3e1eb36e3325c85b2d5d72c
