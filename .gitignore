@@ -7,7 +7,7 @@ Thumbs.db
 /.buildpath
 /.project
 
-/vendor
+/composer.phar
 /app/cache/*
 /app/logs/*
 
