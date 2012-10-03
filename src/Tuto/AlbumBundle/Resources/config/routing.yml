@@ -1,0 +1,7 @@
+#tuto_album_homepage:
+#    pattern:  /
+#    defaults: { _controller: TutoAlbumBundle:Album:index }
+
+tuto_album:
+    resource: "@TutoAlbumBundle/Controller/AlbumController.php"
+    type:     annotation
