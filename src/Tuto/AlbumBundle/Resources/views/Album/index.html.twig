@@ -2,4 +2,11 @@
 
 {% block content %}
 <p>Album list goes here.</p>
+
+<ul>
+{% for album in albums %}
+    <li>{{ album.id }}: {{ album.title }} (by {{ album.artist }})</li>
+{% endfor %}
+</ul>
+
 {% endblock %}

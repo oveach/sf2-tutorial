@@ -3,6 +3,7 @@
 namespace Tuto\AlbumBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Tuto\AlbumBundle\Entity\Album;
 
 // these import the "@Route" and "@Template" annotations
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -16,6 +17,8 @@ class AlbumController extends Controller
      */
     public function indexAction()
     {
-        return array();
+        $em = $this->getDoctrine()->getEntityManager();
+        $albums = $em->getRepository('TutoAlbumBundle:Album')->findAll();
+        return array('albums' => $albums);
     }
 }
