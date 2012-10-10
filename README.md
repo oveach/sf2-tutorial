@@ -22,9 +22,15 @@ Create the following virtual host entry:
     </VirtualHost>
 
 ###Permissions
-Don't forget to let the folders app/cache and app/logs writable by your webserver:
+Symfony needs to write to **app/logs** and **app/cache** (easy to understand why) in 2 ways:
 
-    chgrp -R www-data app/cache/
-    chgrp -R www-data app/logs/
+- from web server
+- from console utility
+
+So you need to set premissions properly on the folders **app/cache** and **app/logs**. The best way is to use ACLs.
+Example for linux systems (Ubuntu):
+
+    sudo setfacl -R -m u:www-data:rwx -m u:`whoami`:rwx app/cache app/logs
+    sudo setfacl -dR -m u:www-data:rwx -m u:`whoami`:rwx app/cache app/logs
 
 Browse this page to check the config: http://sf2-tutorial.localhost/config.php
