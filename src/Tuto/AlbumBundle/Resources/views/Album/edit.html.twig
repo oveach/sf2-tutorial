@@ -1,0 +1,13 @@
+{% extends "TutoAlbumBundle::layout.html.twig" %}
+
+{% block content %}
+
+<h2>{{ title }}</h2>
+
+<form action="{{ path('edit') }}" method="post" {{ form_enctype(form) }}>
+    {{ form_widget(form) }}
+
+    <input type="submit" value="{{ submitValue }}"/>
+</form>
+
+{% endblock %}

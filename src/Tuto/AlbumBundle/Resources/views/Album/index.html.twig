@@ -1,7 +1,8 @@
 {% extends "TutoAlbumBundle::layout.html.twig" %}
 
 {% block content %}
-<p>Album list goes here.</p>
+<h2>My albums</h2>
+<p><a href="{{ path("edit") }}">Add new album</a></p>
 
 <ul>
 {% for album in albums %}
