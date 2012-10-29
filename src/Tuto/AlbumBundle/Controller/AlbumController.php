@@ -14,7 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 class AlbumController extends Controller
 {
     /**
-     * @Route("/", name="_home")
+     * @Route("/", name="_index")
      * @Template()
      */
     public function indexAction()
@@ -25,21 +25,24 @@ class AlbumController extends Controller
     }
     
     /**
-     * @Route("/edit", name="edit")
+     * @Route("/edit/{id}", requirements={"id" = "\d+"}, defaults={"id" = null}, name="_edit")
      * @Template()
      */
-    public function editAction(Request $request)
+    public function editAction($id, Request $request)
     {
         $em = $this->get('doctrine')->getEntityManager();
-//         if (!empty($request->get("id"))) {
-//             $album = $em->find('TutoAlbumBundle:Album', $request->get("id"));
-//             $submitValue = "Edit";
-//             $title = "Edit album";
-//         } else {
+        if (!empty($id)) {
+            $album = $em->find('TutoAlbumBundle:Album', $id);
+            if (!$album instanceof Album) {
+                throw new \Exception("Album with id $id not found");
+            }
+            $submitValue = "Edit";
+            $title = "Edit album";
+        } else {
             $album = new Album();
             $submitValue = "Add";
             $title = "Add new album";
-//         }
+        }
         
         $form = $this->createForm(new AlbumType(), $album);
         
@@ -49,7 +52,7 @@ class AlbumController extends Controller
                 $em->persist($album);
                 $em->flush();
                 $this->get('session')->getFlashBag()->add('notice', "Album saved successfully");
-                return $this->redirect($this->generateUrl("_home"));
+                return $this->redirect($this->generateUrl("_index"));
             }
         }
         

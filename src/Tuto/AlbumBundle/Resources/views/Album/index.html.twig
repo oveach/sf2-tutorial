@@ -2,11 +2,14 @@
 
 {% block content %}
 <h2>My albums</h2>
-<p><a href="{{ path("edit") }}">Add new album</a></p>
+<p><a href="{{ path("_edit") }}">Add new album</a></p>
 
 <ul>
 {% for album in albums %}
-    <li>{{ album.id }}: {{ album.title }} (by {{ album.artist }})</li>
+    <li>
+        {{ album.id }}: {{ album.title }} (by {{ album.artist }}) 
+        <a href="{{ path('_edit', {'id': album.id}) }}">Edit</a>
+    </li>
 {% endfor %}
 </ul>
 

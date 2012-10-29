@@ -4,7 +4,7 @@
 
 <h2>{{ title }}</h2>
 
-<form action="{{ path('edit') }}" method="post" {{ form_enctype(form) }}>
+<form action="{{ path('_edit', {'id': form.vars.value.id}) }}" method="post" {{ form_enctype(form) }}>
     {{ form_widget(form) }}
 
     <input type="submit" value="{{ submitValue }}"/>
