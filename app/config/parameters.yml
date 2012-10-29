@@ -3,8 +3,8 @@ parameters:
     database_host:     localhost
     database_port:     ~
     database_name:     sf2tutorial
-    database_user:     root
-    database_password: root
+    database_user:     sf2tuto
+    database_password: sf2tuto
 
     mailer_transport:  smtp
     mailer_host:       localhost
