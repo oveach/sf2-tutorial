@@ -110,6 +110,18 @@ a {
     text-decoration: none;
 }
 
+input {
+    border: 1px solid #CCCCCC;
+    border-radius: 3px 3px 3px 3px;
+    font-family: Helvetica, Arial, sans-serif !important;
+    font-size: 1em !important;
+}
+
+input[type=submit] {
+    padding: 4px;
+    margin: 4px 0;
+}
+
 header {
     background-color: #2C2C2C;
     color: #FFFFFF;
