@@ -1,17 +1,31 @@
 {% extends "TutoAlbumBundle::layout.html.twig" %}
 
 {% block content %}
-<h2>My albums</h2>
-<p><a href="{{ path("_edit") }}">Add new album</a></p>
+<h1>My albums</h1>
+<p class="addlink"><a href="{{ path("_edit") }}">Add new album</a></p>
 
-<ul>
-{% for album in albums %}
-    <li>
-        {{ album.id }}: {{ album.title }} (by {{ album.artist }}) 
-        <a href="{{ path('_edit', {'id': album.id}) }}">Edit</a>
-        <a href="{{ path('_delete', {'id': album.id}) }}">Delete</a>
-    </li>
-{% endfor %}
-</ul>
+{% if albums|length > 0 %}
+<table class="list">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Artist</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for album in albums %}
+        <tr>
+            <td>{{ album.title }}</td>
+            <td>{{ album.artist }}</td>
+            <td> 
+                <a href="{{ path('_edit', {'id': album.id}) }}">Edit</a>
+                <a href="{{ path('_delete', {'id': album.id}) }}">Delete</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
 
 {% endblock %}

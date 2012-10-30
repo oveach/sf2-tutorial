@@ -4,18 +4,30 @@
         <meta charset="UTF-8" />
         <title>{% block title %}SF2 Tutorial{% endblock %}</title>
         <link rel="icon" sizes="16x16" href="{{ asset('favicon.ico') }}" />
-        <link rel="stylesheet" href="{{ asset('bundles/tutoalbum/css/album.css') }}" />
+        {% stylesheets
+            '@TutoAlbumBundle/Resources/public/css/*'
+        %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
     </head>
     <body>
-        <h1>SF2 Tutorial</h1>
-        
-        {% for flashMessage in app.session.flashbag.get('notice') %}
-            <div class="flash-notice">
-                {{ flashMessage }}
+    
+        <header>
+            <div class="container">
+                <a href="{{ path('_index') }}" id="home" title="Home">Symfony2 Tutorial</a>
             </div>
-        {% endfor %}
-
-        {% block content %}
-        {% endblock %}
+        </header>
+        
+        <div class="container">
+            {% for flashMessage in app.session.flashbag.get('notice') %}
+                <div class="flash-notice">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+    
+            {% block content %}
+            {% endblock %}
+        </div>
+    
     </body>
 </html>
