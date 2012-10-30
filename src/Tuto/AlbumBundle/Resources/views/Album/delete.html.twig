@@ -1,0 +1,14 @@
+{% extends "TutoAlbumBundle::layout.html.twig" %}
+
+{% block content %}
+
+<h2>Delete album</h2>
+
+<p>Are you sure that you want to delete '{{ album.title }}' by '{{ album.artist }}'?</p> 
+
+<form action="{{ path('_delete', {'id': album.id}) }}" method="post">
+    <input type="submit" value="Yes" name="confirm"/>
+    <input type="submit" value="No" name="cancel"/>
+</form>
+
+{% endblock %}

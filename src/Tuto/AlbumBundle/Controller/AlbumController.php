@@ -62,4 +62,30 @@ class AlbumController extends Controller
             'title' => $title,
         );
     }
+
+    /**
+     * @Route("/delete/{id}", requirements={"id" = "\d+"}, name="_delete")
+     * @Template()
+     */
+    public function deleteAction($id, Request $request)
+    {
+        $em = $this->get('doctrine')->getEntityManager();
+        $album = $em->find('TutoAlbumBundle:Album', $id);
+        if (!$album instanceof Album) {
+            throw new \Exception("Album with id $id not found");
+        }
+        
+        if ($request->getMethod() == 'POST') {
+            if ($request->request->has('confirm')) {
+                $em->remove($album);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add('notice', "Album deleted successfully");
+            }
+            return $this->redirect($this->generateUrl("_index"));
+        } else {
+            return array(
+                'album' => $album,
+            );
+        }
+    }
 }

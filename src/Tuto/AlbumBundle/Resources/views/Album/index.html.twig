@@ -9,6 +9,7 @@
     <li>
         {{ album.id }}: {{ album.title }} (by {{ album.artist }}) 
         <a href="{{ path('_edit', {'id': album.id}) }}">Edit</a>
+        <a href="{{ path('_delete', {'id': album.id}) }}">Delete</a>
     </li>
 {% endfor %}
 </ul>
