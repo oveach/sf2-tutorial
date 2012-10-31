@@ -110,15 +110,33 @@ a {
     text-decoration: none;
 }
 
+div label, div input {
+    display: block;
+}
+
+input {
+    border: 1px solid #CCCCCC;
+    border-radius: 3px 3px 3px 3px;
+    font-family: Helvetica, Arial, sans-serif !important;
+    font-size: 1em !important;
+    margin-bottom: 1em !important;
+    padding: 4px;
+}
+
 header {
     background-color: #2C2C2C;
     color: #FFFFFF;
 }
 
 header a#home {
-    background: url(bundles/tutoalbum/images/symfony2-logo.png) no-repeat;
+    background: url(/bundles/tutoalbum/images/symfony2-logo.png) 0 no-repeat;
     color: #FFFFFF;
-    font-size: 1.7em;
+    font-size: 2.5em;
+    padding-left: 55px;
+}
+
+hr {
+    margin: 18px 0;
 }
 
 div.container {
@@ -147,7 +165,23 @@ table.list td, table.list th {
     padding: 8px;
 }
 
+table.list tr:last-child td {
+    border-bottom: none !important;
+}
 
+div.flash-notice {
+    margin: 1em 0;
+    border: 1px solid #0088CC;
+    color: #0088CC;
+    background-color: #E5ECFF;
+    padding: 4px;
+}
+
+ul.form_errors {
+    color: #FF0000;
+    padding: 0;
+    list-style-type: none;
+}
 
 /* ==========================================================================
    Helper classes

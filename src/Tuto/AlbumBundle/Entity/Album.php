@@ -3,6 +3,7 @@ namespace Tuto\AlbumBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use DMS\Filter\Rules as Filter;
 
 /**
  * @ORM\Entity
@@ -23,6 +24,8 @@ class Album
      * @ORM\Column(name="artist", type="string", length=100, nullable=false)
      * @Assert\NotBlank()
      * @Assert\MaxLength(100)
+     * @Filter\Trim
+     * @Filter\StripTags
      */
     protected $artist;
     
@@ -31,6 +34,8 @@ class Album
      * @ORM\Column(name="title", type="string", length=100, nullable=false)
      * @Assert\NotBlank()
      * @Assert\MaxLength(100)
+     * @Filter\Trim
+     * @Filter\StripTags
      */
     protected $title;
 
