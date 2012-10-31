@@ -2,6 +2,7 @@
 namespace Tuto\AlbumBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -20,12 +21,16 @@ class Album
     /**
      * @var string
      * @ORM\Column(name="artist", type="string", length=100, nullable=false)
+     * @Assert\NotBlank()
+     * @Assert\MaxLength(100)
      */
     protected $artist;
     
     /**
      * @var string
      * @ORM\Column(name="title", type="string", length=100, nullable=false)
+     * @Assert\NotBlank()
+     * @Assert\MaxLength(100)
      */
     protected $title;
 
