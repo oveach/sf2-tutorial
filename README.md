@@ -34,3 +34,10 @@ Example for linux systems (Ubuntu):
     sudo setfacl -dR -m u:www-data:rwx -m u:`whoami`:rwx app/cache app/logs
 
 Browse this page to check the config: http://sf2-tutorial.localhost/config.php
+
+###Database
+Create a mysql database named **sf2tutorial** and add a user **sf2tuto** with password **sf2tuto**.
+Then run the following command to create the schema:
+
+    php app/console doctrine:schema:update --force
+    
