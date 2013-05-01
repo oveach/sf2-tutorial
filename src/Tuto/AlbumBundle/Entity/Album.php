@@ -23,7 +23,7 @@ class Album
      * @var string
      * @ORM\Column(name="artist", type="string", length=100, nullable=false)
      * @Assert\NotBlank()
-     * @Assert\MaxLength(100)
+     * @Assert\Length(min="0", max="100")
      * @Filter\Trim
      * @Filter\StripTags
      */
@@ -33,7 +33,7 @@ class Album
      * @var string
      * @ORM\Column(name="title", type="string", length=100, nullable=false)
      * @Assert\NotBlank()
-     * @Assert\MaxLength(100)
+     * @Assert\Length(min="0", max="100")
      * @Filter\Trim
      * @Filter\StripTags
      */

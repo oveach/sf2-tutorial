@@ -19,7 +19,7 @@ class AlbumController extends Controller
      */
     public function indexAction()
     {
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $albums = $em->getRepository('TutoAlbumBundle:Album')->findAll();
         return array('albums' => $albums);
     }
@@ -30,7 +30,7 @@ class AlbumController extends Controller
      */
     public function editAction($id, Request $request)
     {
-        $em = $this->get('doctrine')->getEntityManager();
+        $em = $this->get('doctrine')->getManager();
         if (!empty($id)) {
             $album = $em->find('TutoAlbumBundle:Album', $id);
             if (!$album instanceof Album) {
@@ -69,7 +69,7 @@ class AlbumController extends Controller
      */
     public function deleteAction($id, Request $request)
     {
-        $em = $this->get('doctrine')->getEntityManager();
+        $em = $this->get('doctrine')->getManager();
         $album = $em->find('TutoAlbumBundle:Album', $id);
         if (!$album instanceof Album) {
             throw new \Exception("Album with id $id not found");
