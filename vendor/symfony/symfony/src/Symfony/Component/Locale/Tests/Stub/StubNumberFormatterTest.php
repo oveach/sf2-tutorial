@@ -23,7 +23,7 @@ use Symfony\Component\Locale\Tests\TestCase as LocaleTestCase;
 class StubNumberFormatterTest extends LocaleTestCase
 {
     /**
-     * @expectedException Symfony\Component\Locale\Exception\MethodArgumentValueNotImplementedException
+     * @expectedException \Symfony\Component\Locale\Exception\MethodArgumentValueNotImplementedException
      */
     public function testConstructorWithUnsupportedLocale()
     {
@@ -31,7 +31,7 @@ class StubNumberFormatterTest extends LocaleTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Locale\Exception\MethodArgumentValueNotImplementedException
+     * @expectedException \Symfony\Component\Locale\Exception\MethodArgumentValueNotImplementedException
      */
     public function testConstructorWithUnsupportedStyle()
     {
@@ -39,7 +39,7 @@ class StubNumberFormatterTest extends LocaleTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Locale\Exception\MethodArgumentNotImplementedException
+     * @expectedException \Symfony\Component\Locale\Exception\MethodArgumentNotImplementedException
      */
     public function testConstructorWithPatternDifferentThanNull()
     {
@@ -47,7 +47,7 @@ class StubNumberFormatterTest extends LocaleTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Locale\Exception\MethodArgumentValueNotImplementedException
+     * @expectedException \Symfony\Component\Locale\Exception\MethodArgumentValueNotImplementedException
      */
     public function testSetAttributeWithUnsupportedAttribute()
     {
@@ -56,7 +56,7 @@ class StubNumberFormatterTest extends LocaleTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Locale\Exception\MethodArgumentValueNotImplementedException
+     * @expectedException \Symfony\Component\Locale\Exception\MethodArgumentValueNotImplementedException
      */
     public function testSetAttributeInvalidRoundingMode()
     {
@@ -160,6 +160,7 @@ class StubNumberFormatterTest extends LocaleTestCase
      */
     public function testFormatCurrencyWithCurrencyStyleCostaRicanColonsRoundingStub($value, $currency, $symbol, $expected)
     {
+        $this->skipIfICUDataVersionNotDefined();
         $formatter = $this->getStubFormatterWithCurrencyStyle();
         $this->assertEquals(sprintf($expected, $symbol), $formatter->formatCurrency($value, $currency));
     }
@@ -191,6 +192,7 @@ class StubNumberFormatterTest extends LocaleTestCase
      */
     public function testFormatCurrencyWithCurrencyStyleBrazilianRealRoundingStub($value, $currency, $symbol, $expected)
     {
+        $this->skipIfICUDataVersionNotDefined();
         $formatter = $this->getStubFormatterWithCurrencyStyle();
         $this->assertEquals(sprintf($expected, $symbol), $formatter->formatCurrency($value, $currency));
     }
@@ -208,7 +210,7 @@ class StubNumberFormatterTest extends LocaleTestCase
 
     public function formatCurrencyWithCurrencyStyleBrazilianRealRoundingProvider()
     {
-        $brl = $this->isIntlExtensionLoaded() && $this->isSameAsIcuVersion('4.8') ? 'BR' : 'R';
+        $brl = $this->isIntlExtensionLoaded() && $this->isGreaterOrEqualThanIcuVersion('4.8') ? 'BR' : 'R';
 
         return array(
             array(100, 'BRL', $brl, '%s$100.00'),
@@ -231,6 +233,7 @@ class StubNumberFormatterTest extends LocaleTestCase
      */
     public function testFormatCurrencyWithCurrencyStyleSwissRoundingStub($value, $currency, $symbol, $expected)
     {
+        $this->skipIfICUDataVersionNotDefined();
         $formatter = $this->getStubFormatterWithCurrencyStyle();
         $this->assertEquals(sprintf($expected, $symbol), $formatter->formatCurrency($value, $currency));
     }
@@ -326,7 +329,7 @@ class StubNumberFormatterTest extends LocaleTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Locale\Exception\MethodArgumentValueNotImplementedException
+     * @expectedException \Symfony\Component\Locale\Exception\MethodArgumentValueNotImplementedException
      */
     public function testFormatTypeInt32Stub()
     {
@@ -364,7 +367,7 @@ class StubNumberFormatterTest extends LocaleTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Locale\Exception\MethodArgumentValueNotImplementedException
+     * @expectedException \Symfony\Component\Locale\Exception\MethodArgumentValueNotImplementedException
      */
     public function testFormatTypeInt64Stub()
     {
@@ -401,7 +404,7 @@ class StubNumberFormatterTest extends LocaleTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Locale\Exception\MethodArgumentValueNotImplementedException
+     * @expectedException \Symfony\Component\Locale\Exception\MethodArgumentValueNotImplementedException
      */
     public function testFormatTypeDoubleStub()
     {
@@ -696,7 +699,7 @@ class StubNumberFormatterTest extends LocaleTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Locale\Exception\MethodNotImplementedException
+     * @expectedException \Symfony\Component\Locale\Exception\MethodNotImplementedException
      */
     public function testGetPattern()
     {
@@ -705,7 +708,7 @@ class StubNumberFormatterTest extends LocaleTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Locale\Exception\MethodNotImplementedException
+     * @expectedException \Symfony\Component\Locale\Exception\MethodNotImplementedException
      */
     public function testGetSymbol()
     {
@@ -714,7 +717,7 @@ class StubNumberFormatterTest extends LocaleTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Locale\Exception\MethodNotImplementedException
+     * @expectedException \Symfony\Component\Locale\Exception\MethodNotImplementedException
      */
     public function testGetTextAttribute()
     {
@@ -723,7 +726,7 @@ class StubNumberFormatterTest extends LocaleTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Locale\Exception\MethodNotImplementedException
+     * @expectedException \Symfony\Component\Locale\Exception\MethodNotImplementedException
      */
     public function testParseCurrency()
     {
@@ -1117,7 +1120,7 @@ class StubNumberFormatterTest extends LocaleTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Locale\Exception\MethodArgumentNotImplementedException
+     * @expectedException \Symfony\Component\Locale\Exception\MethodArgumentNotImplementedException
      */
     public function testParseWithNotNullPositionValueStub()
     {
@@ -1136,7 +1139,7 @@ class StubNumberFormatterTest extends LocaleTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Locale\Exception\MethodNotImplementedException
+     * @expectedException \Symfony\Component\Locale\Exception\MethodNotImplementedException
      */
     public function testSetPattern()
     {
@@ -1145,7 +1148,7 @@ class StubNumberFormatterTest extends LocaleTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Locale\Exception\MethodNotImplementedException
+     * @expectedException \Symfony\Component\Locale\Exception\MethodNotImplementedException
      */
     public function testSetSymbol()
     {
@@ -1154,7 +1157,7 @@ class StubNumberFormatterTest extends LocaleTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Locale\Exception\MethodNotImplementedException
+     * @expectedException \Symfony\Component\Locale\Exception\MethodNotImplementedException
      */
     public function testSetTextAttribute()
     {
@@ -1191,5 +1194,12 @@ class StubNumberFormatterTest extends LocaleTestCase
         $formatter->setSymbol(\NumberFormatter::CURRENCY_SYMBOL, 'SFD');
 
         return $formatter;
+    }
+
+    protected function skipIfICUDataVersionNotDefined()
+    {
+        if (!getenv('USE_INTL_ICU_DATA_VERSION')) {
+            $this->markTestSkipped('Please set environment variable USE_INTL_ICU_DATA_VERSION.');
+        }
     }
 }

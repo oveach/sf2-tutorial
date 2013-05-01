@@ -13,6 +13,7 @@ namespace Symfony\Bundle\SecurityBundle\DependencyInjection;
 
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\SecurityFactoryInterface;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\UserProvider\UserProviderFactoryInterface;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -182,7 +183,7 @@ class SecurityExtension extends Extension
                 $container,
                 $access['path'],
                 $access['host'],
-                count($access['methods']) === 0 ? null : $access['methods'],
+                $access['methods'],
                 $access['ip']
             );
 
@@ -449,6 +450,34 @@ class SecurityExtension extends Extension
             );
         }
 
+        // pbkdf2 encoder
+        if ('pbkdf2' === $config['algorithm']) {
+            $arguments = array(
+                $config['hash_algorithm'],
+                $config['encode_as_base64'],
+                $config['iterations'],
+                $config['key_length'],
+            );
+
+            return array(
+                'class' => new Parameter('security.encoder.pbkdf2.class'),
+                'arguments' => $arguments,
+            );
+        }
+
+        // bcrypt encoder
+        if ('bcrypt' === $config['algorithm']) {
+            $arguments = array(
+                new Reference('security.secure_random'),
+                $config['cost'],
+            );
+
+            return array(
+                'class' => new Parameter('security.encoder.bcrypt.class'),
+                'arguments' => $arguments,
+            );
+        }
+
         // message digest encoder
         $arguments = array(
             $config['algorithm'],
@@ -574,13 +603,17 @@ class SecurityExtension extends Extension
         return $switchUserListenerId;
     }
 
-    private function createRequestMatcher($container, $path = null, $host = null, $methods = null, $ip = null, array $attributes = array())
+    private function createRequestMatcher($container, $path = null, $host = null, $methods = array(), $ip = null, array $attributes = array())
     {
         $serialized = serialize(array($path, $host, $methods, $ip, $attributes));
         $id = 'security.request_matcher.'.md5($serialized).sha1($serialized);
 
         if (isset($this->requestMatchers[$id])) {
             return $this->requestMatchers[$id];
+        }
+
+        if ($methods) {
+            $methods = array_map('strtoupper', (array) $methods);
         }
 
         // only add arguments that are necessary

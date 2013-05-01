@@ -110,7 +110,7 @@ a {
     text-decoration: none;
 }
 
-div label, div input {
+form div label, form div input {
     display: block;
 }
 

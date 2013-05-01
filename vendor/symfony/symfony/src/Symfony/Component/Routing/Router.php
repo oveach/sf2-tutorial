@@ -13,8 +13,10 @@ namespace Symfony\Component\Routing;
 
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\ConfigCache;
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\ConfigurableRequirementsInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 
 /**
  * The Router class is an example of the integration of all pieces of the
@@ -24,13 +26,44 @@ use Symfony\Component\Routing\Generator\ConfigurableRequirementsInterface;
  */
 class Router implements RouterInterface
 {
+    /**
+     * @var UrlMatcherInterface|null
+     */
     protected $matcher;
+
+    /**
+     * @var UrlGeneratorInterface|null
+     */
     protected $generator;
+
+    /**
+     * @var RequestContext
+     */
     protected $context;
+
+    /**
+     * @var LoaderInterface
+     */
     protected $loader;
+
+    /**
+     * @var RouteCollection|null
+     */
     protected $collection;
+
+    /**
+     * @var mixed
+     */
     protected $resource;
-    protected $options;
+
+    /**
+     * @var array
+     */
+    protected $options = array();
+
+    /**
+     * @var LoggerInterface|null
+     */
     protected $logger;
 
     /**
@@ -150,8 +183,12 @@ class Router implements RouterInterface
     {
         $this->context = $context;
 
-        $this->getMatcher()->setContext($context);
-        $this->getGenerator()->setContext($context);
+        if (null !== $this->matcher) {
+            $this->getMatcher()->setContext($context);
+        }
+        if (null !== $this->generator) {
+            $this->getGenerator()->setContext($context);
+        }
     }
 
     /**
@@ -165,9 +202,9 @@ class Router implements RouterInterface
     /**
      * {@inheritdoc}
      */
-    public function generate($name, $parameters = array(), $absolute = false)
+    public function generate($name, $parameters = array(), $referenceType = self::ABSOLUTE_PATH)
     {
-        return $this->getGenerator()->generate($name, $parameters, $absolute);
+        return $this->getGenerator()->generate($name, $parameters, $referenceType);
     }
 
     /**

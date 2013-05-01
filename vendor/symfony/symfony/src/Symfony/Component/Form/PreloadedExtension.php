@@ -11,7 +11,7 @@
 
 namespace Symfony\Component\Form;
 
-use Symfony\Component\Form\Exception\FormException;
+use Symfony\Component\Form\Exception\Exception;
 
 /**
  * A form extension with preloaded types, type exceptions and type guessers.
@@ -38,11 +38,11 @@ class PreloadedExtension implements FormExtensionInterface
     /**
      * Creates a new preloaded extension.
      *
-     * @param array                    $types          The types that the extension should support.
-     * @param array                    $typeExtensions The type extensions that the extension should support.
-     * @param FormTypeGuesserInterface $typeGuesser    The guesser that the extension should support.
+     * @param array                         $types          The types that the extension should support.
+     * @param array                         $typeExtensions The type extensions that the extension should support.
+     * @param FormTypeGuesserInterface|null $typeGuesser    The guesser that the extension should support.
      */
-    public function __construct(array $types, array $typeExtensions, FormTypeGuesserInterface $typeGuesser)
+    public function __construct(array $types, array $typeExtensions, FormTypeGuesserInterface $typeGuesser = null)
     {
         $this->types = $types;
         $this->typeExtensions = $typeExtensions;
@@ -55,7 +55,7 @@ class PreloadedExtension implements FormExtensionInterface
     public function getType($name)
     {
         if (!isset($this->types[$name])) {
-            throw new FormException(sprintf('The type "%s" can not be loaded by this extension', $name));
+            throw new Exception(sprintf('The type "%s" can not be loaded by this extension', $name));
         }
 
         return $this->types[$name];

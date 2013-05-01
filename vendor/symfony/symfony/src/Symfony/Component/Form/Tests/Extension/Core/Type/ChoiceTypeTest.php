@@ -11,8 +11,6 @@
 
 namespace Symfony\Component\Form\Tests\Extension\Core\Type;
 
-use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
-
 use Symfony\Component\Form\Extension\Core\ChoiceList\ObjectChoiceList;
 use Symfony\Component\Form\Extension\Core\View\ChoiceView;
 
@@ -79,7 +77,7 @@ class ChoiceTypeTest extends TypeTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
+     * @expectedException \Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
      */
     public function testChoiceListOptionExpectsChoiceListInterface()
     {
@@ -88,10 +86,7 @@ class ChoiceTypeTest extends TypeTestCase
         ));
     }
 
-    /**
-     * expectedException Symfony\Component\Form\Exception\FormException
-     */
-    public function testEitherChoiceListOrChoicesMustBeSet()
+    public function testChoiceListAndChoicesCanBeEmpty()
     {
         $this->factory->create('choice', null, array(
         ));
@@ -744,5 +739,23 @@ class ChoiceTypeTest extends TypeTestCase
         $this->factory->createNamed('name', 'choice', null, array(
             'choices' => array(),
         ));
+    }
+
+    public function testInitializeWithDefaultObjectChoice()
+    {
+        $obj1 = (object) array('value' => 'a', 'label' => 'A');
+        $obj2 = (object) array('value' => 'b', 'label' => 'B');
+        $obj3 = (object) array('value' => 'c', 'label' => 'C');
+        $obj4 = (object) array('value' => 'd', 'label' => 'D');
+
+        $form = $this->factory->create('choice', null, array(
+            'choice_list' => new ObjectChoiceList(array($obj1, $obj2, $obj3, $obj4), 'label', array(), null, 'value'),
+            // Used to break because "data_class" was inferred, which needs to
+            // remain null in every case (because it refers to the view format)
+            'data' => $obj3,
+        ));
+
+        // Trigger data initialization
+        $form->getViewData();
     }
 }

@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Component\Tests\BrowserKit;
+namespace Symfony\Component\BrowserKit\Tests;
 
 use Symfony\Component\BrowserKit\Client;
 use Symfony\Component\BrowserKit\History;
@@ -260,6 +260,37 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $client->submit($crawler->filter('input')->form());
 
         $this->assertEquals('http://www.example.com/foo', $client->getRequest()->getUri(), '->submit() submit forms');
+    }
+
+    public function testSubmitPreserveAuth()
+    {
+        if (!class_exists('Symfony\Component\DomCrawler\Crawler')) {
+            $this->markTestSkipped('The "DomCrawler" component is not available');
+        }
+
+        if (!class_exists('Symfony\Component\CssSelector\CssSelector')) {
+            $this->markTestSkipped('The "CssSelector" component is not available');
+        }
+
+        $client = new TestClient(array('PHP_AUTH_USER' => 'foo', 'PHP_AUTH_PW' => 'bar'));
+        $client->setNextResponse(new Response('<html><form action="/foo"><input type="submit" /></form></html>'));
+        $crawler = $client->request('GET', 'http://www.example.com/foo/foobar');
+
+        $server = $client->getRequest()->getServer();
+        $this->assertArrayHasKey('PHP_AUTH_USER', $server);
+        $this->assertEquals('foo', $server['PHP_AUTH_USER']);
+        $this->assertArrayHasKey('PHP_AUTH_PW', $server);
+        $this->assertEquals('bar', $server['PHP_AUTH_PW']);
+
+        $client->submit($crawler->filter('input')->form());
+
+        $this->assertEquals('http://www.example.com/foo', $client->getRequest()->getUri(), '->submit() submit forms');
+
+        $server = $client->getRequest()->getServer();
+        $this->assertArrayHasKey('PHP_AUTH_USER', $server);
+        $this->assertEquals('foo', $server['PHP_AUTH_USER']);
+        $this->assertArrayHasKey('PHP_AUTH_PW', $server);
+        $this->assertEquals('bar', $server['PHP_AUTH_PW']);
     }
 
     public function testFollowRedirect()

@@ -3,6 +3,7 @@
 namespace Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -19,7 +20,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 /**
  * DoctrineParamConverter.
  *
- * @author     Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 class DoctrineParamConverter implements ParamConverterInterface
 {
@@ -33,11 +34,21 @@ class DoctrineParamConverter implements ParamConverterInterface
         $this->registry = $registry;
     }
 
+    /**
+     * @{inheritdoc}
+     * 
+     * @throws \LogicException       When unable to guess how to get a Doctrine instance from the request information
+     * @throws NotFoundHttpException When object not found
+     */
     public function apply(Request $request, ConfigurationInterface $configuration)
     {
         $name    = $configuration->getName();
         $class   = $configuration->getClass();
         $options = $this->getOptions($configuration);
+
+        if (null === $request->attributes->get($name, false)) {
+            $configuration->setIsOptional(true);
+        }
 
         // find by identifier?
         if (false === $object = $this->find($class, $request, $options, $name)) {
@@ -68,11 +79,17 @@ class DoctrineParamConverter implements ParamConverterInterface
 
         $id = $this->getIdentifier($request, $options, $name);
 
-        if (!$id) {
+        if (false === $id || null === $id) {
             return false;
         }
 
-        return $this->registry->getRepository($class, $options['entity_manager'])->find($id);
+        if (isset($options['repository_method'])) {
+            $method = $options['repository_method'];
+        } else {
+            $method = 'find';
+        }
+
+        return $this->getManager($options['entity_manager'], $class)->getRepository($class)->$method($id);
     }
 
     protected function getIdentifier(Request $request, $options, $name)
@@ -85,6 +102,7 @@ class DoctrineParamConverter implements ParamConverterInterface
                 foreach ($options['id'] as $field) {
                     $id[$field] = $request->attributes->get($field);
                 }
+
                 return $id;
             }
         }
@@ -116,7 +134,8 @@ class DoctrineParamConverter implements ParamConverterInterface
         }
 
         $criteria = array();
-        $metadata = $this->registry->getManager($options['entity_manager'])->getClassMetadata($class);
+        $em = $this->getManager($options['entity_manager'], $class);
+        $metadata = $em->getClassMetadata($class);
 
         foreach ($options['mapping'] as $attribute => $field) {
             if ($metadata->hasField($field) || ($metadata->hasAssociation($field) && $metadata->isSingleValuedAssociation($field))) {
@@ -128,11 +147,24 @@ class DoctrineParamConverter implements ParamConverterInterface
             return false;
         }
 
-        return $this->registry->getRepository($class, $options['entity_manager'])->findOneBy($criteria);
+        if (isset($options['repository_method'])) {
+            $method = $options['repository_method'];
+        } else {
+            $method = 'findOneBy';
+        }
+
+        return $em->getRepository($class)->$method($criteria);
     }
 
+    /**
+     * @{inheritdoc}
+     */
     public function supports(ConfigurationInterface $configuration)
     {
+        if (!$configuration instanceof ParamConverter) {
+            return false;
+        }
+
         // if there is no manager, this means that only Doctrine DBAL is configured
         if (null === $this->registry || !count($this->registry->getManagers())) {
             return false;
@@ -145,9 +177,12 @@ class DoctrineParamConverter implements ParamConverterInterface
         $options = $this->getOptions($configuration);
 
         // Doctrine Entity?
-        return ! $this->registry->getManager($options['entity_manager'])
-                                ->getMetadataFactory()
-                                ->isTransient($configuration->getClass());
+        $em = $this->getManager($options['entity_manager'], $configuration->getClass());
+        if (null === $em) {
+            return false;
+        }
+
+        return ! $em->getMetadataFactory()->isTransient($configuration->getClass());
     }
 
     protected function getOptions(ConfigurationInterface $configuration)
@@ -157,5 +192,14 @@ class DoctrineParamConverter implements ParamConverterInterface
             'exclude'        => array(),
             'mapping'        => array(),
         ), $configuration->getOptions());
+    }
+
+    private function getManager($name, $class)
+    {
+        if (null === $name) {
+            return $this->registry->getManagerForClass($class);
+        }
+
+        return $this->registry->getManager($name);
     }
 }

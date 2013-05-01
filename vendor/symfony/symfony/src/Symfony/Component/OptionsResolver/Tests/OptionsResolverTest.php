@@ -173,7 +173,7 @@ class OptionsResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
+     * @expectedException \Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
      */
     public function testResolveFailsIfNonExistingOption()
     {
@@ -195,7 +195,7 @@ class OptionsResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Symfony\Component\OptionsResolver\Exception\MissingOptionsException
+     * @expectedException \Symfony\Component\OptionsResolver\Exception\MissingOptionsException
      */
     public function testResolveFailsIfMissingRequiredOption()
     {
@@ -258,8 +258,32 @@ class OptionsResolverTest extends \PHPUnit_Framework_TestCase
         ), $this->resolver->resolve($options));
     }
 
+    public function testResolveSucceedsIfOptionalWithAllowedValuesNotSet()
+    {
+        $this->resolver->setRequired(array(
+            'one',
+        ));
+
+        $this->resolver->setOptional(array(
+            'two',
+        ));
+
+        $this->resolver->setAllowedValues(array(
+            'one' => array('1', 'one'),
+            'two' => array('2', 'two'),
+        ));
+
+        $options = array(
+            'one' => '1',
+        );
+
+        $this->assertEquals(array(
+            'one' => '1',
+        ), $this->resolver->resolve($options));
+    }
+
     /**
-     * @expectedException Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
+     * @expectedException \Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
      */
     public function testResolveFailsIfOptionValueNotAllowed()
     {
@@ -403,7 +427,7 @@ class OptionsResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
+     * @expectedException \Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
      */
     public function testResolveFailsIfOptionTypeNotAllowed()
     {
@@ -421,7 +445,7 @@ class OptionsResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
+     * @expectedException \Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
      */
     public function testResolveFailsIfOptionTypeNotAllowedMultipleOptions()
     {
@@ -442,7 +466,7 @@ class OptionsResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
+     * @expectedException \Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
      */
     public function testResolveFailsIfOptionTypeNotAllowedAddTypes()
     {
@@ -463,7 +487,7 @@ class OptionsResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Symfony\Component\OptionsResolver\Exception\OptionDefinitionException
+     * @expectedException \Symfony\Component\OptionsResolver\Exception\OptionDefinitionException
      */
     public function testSetRequiredFailsIfDefaultIsPassed()
     {
@@ -473,7 +497,7 @@ class OptionsResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Symfony\Component\OptionsResolver\Exception\OptionDefinitionException
+     * @expectedException \Symfony\Component\OptionsResolver\Exception\OptionDefinitionException
      */
     public function testSetOptionalFailsIfDefaultIsPassed()
     {

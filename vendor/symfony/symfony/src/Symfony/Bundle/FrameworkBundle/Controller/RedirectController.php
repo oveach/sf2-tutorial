@@ -12,8 +12,9 @@
 namespace Symfony\Bundle\FrameworkBundle\Controller;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Redirects a request to another URL.
@@ -25,8 +26,8 @@ class RedirectController extends ContainerAware
     /**
      * Redirects to another route with the given name.
      *
-     * The response status code is 301 if the permanent parameter is false (default),
-     * and 302 if the redirection is permanent.
+     * The response status code is 302 if the permanent parameter is false (default),
+     * and 301 if the redirection is permanent.
      *
      * In case the route name is empty, the status code will be 404 when permanent is false
      * and 410 otherwise.
@@ -45,27 +46,27 @@ class RedirectController extends ContainerAware
         $attributes = $this->container->get('request')->attributes->get('_route_params');
         unset($attributes['route'], $attributes['permanent']);
 
-        return new RedirectResponse($this->container->get('router')->generate($route, $attributes, true), $permanent ? 301 : 302);
+        return new RedirectResponse($this->container->get('router')->generate($route, $attributes, UrlGeneratorInterface::ABSOLUTE_URL), $permanent ? 301 : 302);
     }
 
     /**
      * Redirects to a URL.
      *
-     * The response status code is 301 if the permanent parameter is false (default),
-     * and 302 if the redirection is permanent.
+     * The response status code is 302 if the permanent parameter is false (default),
+     * and 301 if the redirection is permanent.
      *
      * In case the path is empty, the status code will be 404 when permanent is false
      * and 410 otherwise.
      *
-     * @param string  $path      The absolute path or URL to redirect to
-     * @param Boolean $permanent Whether the redirection is permanent
-     * @param Boolean $scheme    The URL scheme (null to keep the current one)
-     * @param integer $httpPort  The HTTP port
-     * @param integer $httpsPort The HTTPS port
+     * @param string       $path      The absolute path or URL to redirect to
+     * @param Boolean      $permanent Whether the redirect is permanent or not
+     * @param string|null  $scheme    The URL scheme (null to keep the current one)
+     * @param integer|null $httpPort  The HTTP port (null to keep the current one for the same scheme or the configured port in the container)
+     * @param integer|null $httpsPort The HTTPS port (null to keep the current one for the same scheme or the configured port in the container)
      *
      * @return Response A Response instance
      */
-    public function urlRedirectAction($path, $permanent = false, $scheme = null, $httpPort = 80, $httpsPort = 443)
+    public function urlRedirectAction($path, $permanent = false, $scheme = null, $httpPort = null, $httpsPort = null)
     {
         if ('' == $path) {
             return new Response(null, $permanent ? 410 : 404);
@@ -89,10 +90,30 @@ class RedirectController extends ContainerAware
         }
 
         $port = '';
-        if ('http' === $scheme && 80 != $httpPort) {
-            $port = ':'.$httpPort;
-        } elseif ('https' === $scheme && 443 != $httpsPort) {
-            $port = ':'.$httpsPort;
+        if ('http' === $scheme) {
+            if (null === $httpPort) {
+                if ('http' === $request->getScheme()) {
+                    $httpPort = $request->getPort();
+                } elseif ($this->container->hasParameter('request_listener.http_port')) {
+                    $httpPort = $this->container->getParameter('request_listener.http_port');
+                }
+            }
+
+            if (null !== $httpPort && 80 != $httpPort) {
+                $port = ":$httpPort";
+            }
+        } elseif ('https' === $scheme) {
+            if (null === $httpsPort) {
+                if ('https' === $request->getScheme()) {
+                    $httpsPort = $request->getPort();
+                } elseif ($this->container->hasParameter('request_listener.https_port')) {
+                    $httpsPort = $this->container->getParameter('request_listener.https_port');
+                }
+            }
+
+            if (null !== $httpsPort && 443 != $httpsPort) {
+                $port = ":$httpsPort";
+            }
         }
 
         $url = $scheme.'://'.$request->getHost().$port.$request->getBaseUrl().$path.$qs;

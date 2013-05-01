@@ -98,7 +98,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('service_container', 'foo', 'bar'), $sc->getServiceIds(), '->getServiceIds() returns all defined service ids');
 
         $sc = new ProjectServiceContainer();
-        $this->assertEquals(array('scoped', 'scoped_foo', 'bar', 'foo_bar', 'foo.baz', 'circular', 'throw_exception', 'service_container'), $sc->getServiceIds(), '->getServiceIds() returns defined service ids by getXXXService() methods');
+        $this->assertEquals(array('scoped', 'scoped_foo', 'bar', 'foo_bar', 'foo.baz', 'circular', 'throw_exception', 'throws_exception_on_service_configuration', 'service_container'), $sc->getServiceIds(), '->getServiceIds() returns defined service ids by getXXXService() methods');
     }
 
     /**
@@ -261,6 +261,38 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($container->has('a'));
     }
 
+    public function testEnterScopeRecursivelyWithInactiveChildScopes()
+    {
+        $container = new Container();
+        $container->addScope(new Scope('foo'));
+        $container->addScope(new Scope('bar', 'foo'));
+
+        $this->assertFalse($container->isScopeActive('foo'));
+
+        $container->enterScope('foo');
+
+        $this->assertTrue($container->isScopeActive('foo'));
+        $this->assertFalse($container->isScopeActive('bar'));
+        $this->assertFalse($container->has('a'));
+
+        $a = new \stdClass();
+        $container->set('a', $a, 'foo');
+
+        $services = $this->getField($container, 'scopedServices');
+        $this->assertTrue(isset($services['foo']['a']));
+        $this->assertSame($a, $services['foo']['a']);
+
+        $this->assertTrue($container->has('a'));
+        $container->enterScope('foo');
+
+        $services = $this->getField($container, 'scopedServices');
+        $this->assertFalse(isset($services['a']));
+
+        $this->assertTrue($container->isScopeActive('foo'));
+        $this->assertFalse($container->isScopeActive('bar'));
+        $this->assertFalse($container->has('a'));
+    }
+
     public function testLeaveScopeNotActive()
     {
         $container = new Container();
@@ -367,6 +399,27 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    public function testGetThrowsExceptionOnServiceConfiguration()
+    {
+        $c = new ProjectServiceContainer();
+
+        try {
+            $c->get('throws_exception_on_service_configuration');
+            $this->fail('The container can not contain invalid service!');
+        } catch (\Exception $e) {
+            $this->assertEquals('Something was terribly wrong while trying to configure the service!', $e->getMessage());
+        }
+        $this->assertFalse($c->initialized('throws_exception_on_service_configuration'));
+
+        try {
+            $c->get('throws_exception_on_service_configuration');
+            $this->fail('The container can not contain invalid service!');
+        } catch (\Exception $e) {
+            $this->assertEquals('Something was terribly wrong while trying to configure the service!', $e->getMessage());
+        }
+        $this->assertFalse($c->initialized('throws_exception_on_service_configuration'));
+    }
+
     public function getInvalidParentScopes()
     {
         return array(
@@ -446,5 +499,12 @@ class ProjectServiceContainer extends Container
     protected function getThrowExceptionService()
     {
         throw new \Exception('Something went terribly wrong!');
+    }
+
+    protected function getThrowsExceptionOnServiceConfigurationService()
+    {
+        $this->services['throws_exception_on_service_configuration'] = $instance = new \stdClass();
+
+        throw new \Exception('Something was terribly wrong while trying to configure the service!');
     }
 }

@@ -12,6 +12,7 @@
 namespace Symfony\Component\Translation;
 
 use Symfony\Component\Translation\Loader\LoaderInterface;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
  * Translator.
@@ -22,29 +23,48 @@ use Symfony\Component\Translation\Loader\LoaderInterface;
  */
 class Translator implements TranslatorInterface
 {
-    protected $catalogues;
+    /**
+     * @var MessageCatalogueInterface[]
+     */
+    protected $catalogues = array();
+
+    /**
+     * @var string
+     */
     protected $locale;
-    private $fallbackLocales;
-    private $loaders;
-    private $resources;
+
+    /**
+     * @var array
+     */
+    private $fallbackLocales = array();
+
+    /**
+     * @var LoaderInterface[]
+     */
+    private $loaders = array();
+
+    /**
+     * @var array
+     */
+    private $resources = array();
+
+    /**
+     * @var MessageSelector
+     */
     private $selector;
 
     /**
      * Constructor.
      *
-     * @param string          $locale   The locale
-     * @param MessageSelector $selector The message selector for pluralization
+     * @param string               $locale   The locale
+     * @param MessageSelector|null $selector The message selector for pluralization
      *
      * @api
      */
     public function __construct($locale, MessageSelector $selector = null)
     {
         $this->locale = $locale;
-        $this->selector = null === $selector ? new MessageSelector() : $selector;
-        $this->loaders = array();
-        $this->resources = array();
-        $this->catalogues = array();
-        $this->fallbackLocales = array();
+        $this->selector = $selector ?: new MessageSelector();
     }
 
     /**
@@ -73,6 +93,8 @@ class Translator implements TranslatorInterface
     public function addResource($format, $resource, $locale, $domain = 'messages')
     {
         $this->resources[$locale][] = array($format, $resource, $domain);
+
+        unset($this->catalogues[$locale]);
     }
 
     /**
@@ -107,7 +129,7 @@ class Translator implements TranslatorInterface
         // needed as the fallback locales are linked to the already loaded catalogues
         $this->catalogues = array();
 
-        $this->fallbackLocales = is_array($locales) ? $locales : array($locales);
+        $this->fallbackLocales = (array) $locales;
     }
 
     /**
@@ -117,7 +139,7 @@ class Translator implements TranslatorInterface
      */
     public function trans($id, array $parameters = array(), $domain = 'messages', $locale = null)
     {
-        if (!isset($locale)) {
+        if (null === $locale) {
             $locale = $this->getLocale();
         }
 
@@ -135,7 +157,7 @@ class Translator implements TranslatorInterface
      */
     public function transChoice($id, $number, array $parameters = array(), $domain = 'messages', $locale = null)
     {
-        if (!isset($locale)) {
+        if (null === $locale) {
             $locale = $this->getLocale();
         }
 
@@ -160,7 +182,13 @@ class Translator implements TranslatorInterface
 
     protected function loadCatalogue($locale)
     {
-        $this->doLoadCatalogue($locale);
+        try {
+            $this->doLoadCatalogue($locale);
+        } catch (NotFoundResourceException $e) {
+            if (!$this->computeFallbackLocales($locale)) {
+                throw $e;
+            }
+        }
         $this->loadFallbackCatalogues($locale);
     }
 

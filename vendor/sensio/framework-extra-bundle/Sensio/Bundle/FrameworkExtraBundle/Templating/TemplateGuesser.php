@@ -42,10 +42,10 @@ class TemplateGuesser
      * Guesses and returns the template name to render based on the controller
      * and action names.
      *
-     * @param array   $controller An array storing the controller object and action method
-     * @param Request $request    A Request instance
-     * @param string  $engine
-     * @return TemplateReference template reference
+     * @param  array                     $controller An array storing the controller object and action method
+     * @param  Request                   $request    A Request instance
+     * @param  string                    $engine
+     * @return TemplateReference         template reference
      * @throws \InvalidArgumentException
      */
     public function guessTemplateName($controller, Request $request, $engine = 'twig')
@@ -54,22 +54,31 @@ class TemplateGuesser
 
         if (!preg_match('/Controller\\\(.+)Controller$/', $className, $matchController)) {
             throw new \InvalidArgumentException(sprintf('The "%s" class does not look like a controller class (it must be in a "Controller" sub-namespace and the class name must end with "Controller")', get_class($controller[0])));
-
         }
         if (!preg_match('/^(.+)Action$/', $controller[1], $matchAction)) {
             throw new \InvalidArgumentException(sprintf('The "%s" method does not look like an action method (it does not end with Action)', $controller[1]));
         }
 
         $bundle = $this->getBundleForClass($className);
+        while ($bundleName = $bundle->getName()) {
+            if (null === $parentBundleName = $bundle->getParent()) {
+                $bundleName = $bundle->getName();
 
-        return new TemplateReference($bundle->getName(), $matchController[1], $matchAction[1], $request->getRequestFormat(), $engine);
+                break;
+            }
+
+            $bundles = $this->kernel->getBundle($parentBundleName, false);
+            $bundle = array_pop($bundles);
+        }
+
+        return new TemplateReference($bundleName, $matchController[1], $matchAction[1], $request->getRequestFormat(), $engine);
     }
 
     /**
      * Returns the Bundle instance in which the given class name is located.
      *
-     * @param string $class  A fully qualified controller class name
-     * @param Bundle $bundle A Bundle instance
+     * @param  string                    $class  A fully qualified controller class name
+     * @param  Bundle                    $bundle A Bundle instance
      * @throws \InvalidArgumentException
      */
     protected function getBundleForClass($class)

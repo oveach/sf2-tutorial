@@ -11,9 +11,8 @@
 
 namespace Symfony\Component\Form;
 
-use Symfony\Component\Form\Exception\FormException;
+use Symfony\Component\Form\Exception\Exception;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
-use Symfony\Component\Form\Exception\TypeDefinitionException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -47,7 +46,7 @@ class ResolvedFormType implements ResolvedFormTypeInterface
     public function __construct(FormTypeInterface $innerType, array $typeExtensions = array(), ResolvedFormTypeInterface $parent = null)
     {
         if (!preg_match('/^[a-z0-9_]*$/i', $innerType->getName())) {
-            throw new FormException(sprintf(
+            throw new Exception(sprintf(
                 'The "%s" form type name ("%s") is not valid. Names must only contain letters, numbers, and "_".',
                 get_class($innerType),
                 $innerType->getName()
@@ -63,7 +62,9 @@ class ResolvedFormType implements ResolvedFormTypeInterface
         // BC
         if ($innerType instanceof AbstractType) {
             /* @var AbstractType $innerType */
+            set_error_handler(array('Symfony\Component\Form\Test\DeprecationErrorHandler', 'handleBC'));
             $innerType->setExtensions($typeExtensions);
+            restore_error_handler();
         }
 
         $this->innerType = $innerType;
