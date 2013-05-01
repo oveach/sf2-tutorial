@@ -172,6 +172,7 @@ table.list tr:last-child td {
 div.flash-notice {
     margin: 1em 0;
     border: 1px solid #0088CC;
+    border-radius: 5px 5px 5px 5px;
     color: #0088CC;
     background-color: #E5ECFF;
     padding: 4px;
