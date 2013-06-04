@@ -1,8 +1,10 @@
 {% extends "TutoAlbumBundle::layout.html.twig" %}
 
+{% set title = "Delete album" %}
+
 {% block content %}
 
-<h1>Delete album</h1>
+<h1>{{ title }}</h1>
 
 <p>Are you sure that you want to delete '{{ album.title }}' by '{{ album.artist }}'?</p> 
 

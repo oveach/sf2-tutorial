@@ -1,7 +1,9 @@
 {% extends "TutoAlbumBundle::layout.html.twig" %}
 
+{% set title = "My albums" %}
+
 {% block content %}
-<h1>My albums</h1>
+<h1>{{ title }}</h1>
 <p class="addlink"><a href="{{ path("_edit") }}">Add new album</a></p>
 
 {% if albums|length > 0 %}

@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}SF2 Tutorial{% endblock %}</title>
+        <title>{% if title %}{{ title }} - {% endif %}SF2 Tutorial</title>
         <link rel="icon" sizes="16x16" href="{{ asset('favicon.ico') }}" />
         {% stylesheets
             '@TutoAlbumBundle/Resources/public/css/*'
