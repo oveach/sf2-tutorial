@@ -5,21 +5,36 @@ Symfony2 tutorial application based on the ZF2 tutorial by Rob Allen (see https:
 
 Install
 -------
+> Note: All commands are given for linux, specifically tested on Ubuntu.
+
 Composer does not work very well with Symfony, so do not use it. That's why vendor directory is included 
 in the repository.
 
 ###Apache config:
-Create the following virtual host entry:
+Create the following virtual host entry (place it into a file named `sf2tutorial.conf` in `/etc/apache2/sites-available`):
 
     <VirtualHost *:80>
         ServerName sf2-tutorial.localhost
         DocumentRoot /path/to/sf2-tutorial/web
         <Directory /path/to/sf2-tutorial/web>
             AllowOverride All
-            Order allow,deny
-            Allow from all
+            
+            # apache 2.2 style
+            #Order allow,deny
+            #Allow from all
+            
+            # apache 2.4 style
+            Require all granted
         </Directory>
     </VirtualHost>
+
+Of course you need to change `/path/to` with the real path of your project!
+Then enable the vhost with the following commands:
+
+    sudo a2ensite sf2tutorial
+    sudo service apache2 reload
+
+Don't forget to add `sf2-tutorial.localhost` in your `/etc/hosts` file.
 
 ###Permissions
 Symfony needs to write to **app/logs** and **app/cache** (easy to understand why) in 2 ways:
@@ -41,3 +56,5 @@ Then run the following command to create the schema:
 
     php app/console doctrine:schema:update --force
     
+###Test your app
+Browse to http://sf2-tutorial.localhost/app_dev.php
