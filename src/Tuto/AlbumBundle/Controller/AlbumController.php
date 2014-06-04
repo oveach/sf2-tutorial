@@ -88,4 +88,18 @@ class AlbumController extends Controller
             );
         }
     }
+
+    /**
+     * Construct variables to display in footer
+     * @param Request $request
+     * @Template()
+     */
+    public function footerAction(Request $request)
+    {
+        return array(
+            'phpVersion' => PHP_VERSION,
+            'symfonyVersion' => \Symfony\Component\HttpKernel\Kernel::VERSION,
+            'doctrineVersion' => \Doctrine\ORM\Version::VERSION,
+        );
+    }
 }

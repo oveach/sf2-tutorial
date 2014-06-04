@@ -19,6 +19,7 @@
         </header>
         
         <div class="container">
+        
             {% for flashMessage in app.session.flashbag.get('notice') %}
                 <div class="flash-notice">
                     {{ flashMessage }}
@@ -28,6 +29,9 @@
             {% block content %}
             {% endblock %}
             <hr/>
+            
+            <footer>{{ render(controller('TutoAlbumBundle:Album:footer')) }}</footer>
+            
         </div>
     
     </body>
