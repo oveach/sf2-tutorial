@@ -1,12 +1,5 @@
 <?php
 
-namespace Sensio\Bundle\FrameworkExtraBundle\EventListener;
-
-use Doctrine\Common\Annotations\Reader;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
-use Doctrine\Common\Util\ClassUtils;
-
 /*
  * This file is part of the Symfony framework.
  *
@@ -16,16 +9,25 @@ use Doctrine\Common\Util\ClassUtils;
  * with this source code in the file LICENSE.
  */
 
+namespace Sensio\Bundle\FrameworkExtraBundle\EventListener;
+
+use Doctrine\Common\Annotations\Reader;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
+use Doctrine\Common\Util\ClassUtils;
+
 /**
  * The ControllerListener class parses annotation blocks located in
  * controller classes.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ControllerListener
+class ControllerListener implements EventSubscriberInterface
 {
     /**
-     * @var \Doctrine\Common\Annotations\Reader
+     * @var Reader
      */
     protected $reader;
 
@@ -98,5 +100,12 @@ class ControllerListener
         }
 
         return $configurations;
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return array(
+            KernelEvents::CONTROLLER => 'onKernelController',
+        );
     }
 }

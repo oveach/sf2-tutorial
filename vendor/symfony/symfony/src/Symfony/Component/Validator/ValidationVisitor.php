@@ -11,15 +11,18 @@
 
 namespace Symfony\Component\Validator;
 
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Exception\NoSuchMetadataException;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Default implementation of {@link ValidationVisitorInterface} and
  * {@link GlobalExecutionContextInterface}.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
+ *
+ * @deprecated Deprecated since version 2.5, to be removed in Symfony 3.0.
+ *             Use {@link NodeVisitor\NodeVisitorInterface} instead.
  */
 class ValidationVisitor implements ValidationVisitorInterface, GlobalExecutionContextInterface
 {
@@ -62,13 +65,6 @@ class ValidationVisitor implements ValidationVisitorInterface, GlobalExecutionCo
      * @var array
      */
     private $validatedObjects = array();
-
-    /**
-     * @var GraphWalker
-     *
-     * @deprecated Deprecated since version 2.2, to be removed in 2.3.
-     */
-    private $graphWalker;
 
     /**
      * Creates a new validation visitor.
@@ -168,20 +164,6 @@ class ValidationVisitor implements ValidationVisitorInterface, GlobalExecutionCo
         } else {
             $this->metadataFactory->getMetadataFor($value)->accept($this, $value, $group, $propertyPath);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGraphWalker()
-    {
-        trigger_error('getGraphWalker() is deprecated since version 2.2 and will be removed in 2.3.', E_USER_DEPRECATED);
-
-        if (null === $this->graphWalker) {
-            $this->graphWalker = new GraphWalker($this, $this->metadataFactory, $this->translator, $this->translationDomain, $this->validatedObjects);
-        }
-
-        return $this->graphWalker;
     }
 
     /**

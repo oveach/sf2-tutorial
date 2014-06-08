@@ -43,27 +43,23 @@ interface FormConfigInterface
      * Returns whether the form should be mapped to an element of its
      * parent's data.
      *
-     * @return Boolean Whether the form is mapped.
+     * @return bool    Whether the form is mapped.
      */
     public function getMapped();
 
     /**
      * Returns whether the form's data should be modified by reference.
      *
-     * @return Boolean Whether to modify the form's data by reference.
+     * @return bool    Whether to modify the form's data by reference.
      */
     public function getByReference();
 
     /**
-     * Returns whether the form should be virtual.
+     * Returns whether the form should read and write the data of its parent.
      *
-     * When mapping data to the children of a form, the data mapper
-     * should ignore virtual forms and map to the children of the
-     * virtual form instead.
-     *
-     * @return Boolean Whether the form is virtual.
+     * @return bool    Whether the form should inherit its parent's data.
      */
-    public function getVirtual();
+    public function getInheritData();
 
     /**
      * Returns whether the form is compound.
@@ -72,7 +68,7 @@ interface FormConfigInterface
      * children. A form can be compound and have no children at all, like
      * for example an empty collection form.
      *
-     * @return Boolean Whether the form is compound.
+     * @return bool    Whether the form is compound.
      */
     public function getCompound();
 
@@ -105,32 +101,23 @@ interface FormConfigInterface
     public function getDataMapper();
 
     /**
-     * Returns the validators of the form.
-     *
-     * @return FormValidatorInterface The form validator.
-     *
-     * @deprecated Deprecated since version 2.1, to be removed in 2.3.
-     */
-    public function getValidators();
-
-    /**
      * Returns whether the form is required.
      *
-     * @return Boolean Whether the form is required.
+     * @return bool    Whether the form is required.
      */
     public function getRequired();
 
     /**
      * Returns whether the form is disabled.
      *
-     * @return Boolean Whether the form is disabled.
+     * @return bool    Whether the form is disabled.
      */
     public function getDisabled();
 
     /**
      * Returns whether errors attached to the form will bubble to its parent.
      *
-     * @return Boolean Whether errors will bubble up.
+     * @return bool    Whether errors will bubble up.
      */
     public function getErrorBubbling();
 
@@ -153,7 +140,7 @@ interface FormConfigInterface
      *
      * @param  string $name The attribute name.
      *
-     * @return Boolean Whether the attribute exists.
+     * @return bool    Whether the attribute exists.
      */
     public function hasAttribute($name);
 
@@ -186,9 +173,9 @@ interface FormConfigInterface
      *
      * A form with locked data is restricted to the data passed in
      * this configuration. The data can only be modified then by
-     * binding the form.
+     * submitting the form.
      *
-     * @return Boolean Whether the data is locked.
+     * @return bool    Whether the data is locked.
      */
     public function getDataLocked();
 
@@ -198,6 +185,35 @@ interface FormConfigInterface
      * @return FormFactoryInterface The form factory.
      */
     public function getFormFactory();
+
+    /**
+     * Returns the target URL of the form.
+     *
+     * @return string The target URL of the form.
+     */
+    public function getAction();
+
+    /**
+     * Returns the HTTP method used by the form.
+     *
+     * @return string The HTTP method of the form.
+     */
+    public function getMethod();
+
+    /**
+     * Returns the request handler used by the form.
+     *
+     * @return RequestHandlerInterface The request handler.
+     */
+    public function getRequestHandler();
+
+    /**
+     * Returns whether the form should be initialized upon creation.
+     *
+     * @return bool    Returns true if the form should be initialized
+     *                 when created, false otherwise.
+     */
+    public function getAutoInitialize();
 
     /**
      * Returns all options passed during the construction of the form.
@@ -211,7 +227,7 @@ interface FormConfigInterface
      *
      * @param  string $name The option name,
      *
-     * @return Boolean Whether the option exists.
+     * @return bool    Whether the option exists.
      */
     public function hasOption($name);
 

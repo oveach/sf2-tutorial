@@ -11,13 +11,12 @@
 
 namespace Symfony\Component\Validator\Tests\Constraints;
 
-use Symfony\Component\Validator\ExecutionContext;
-use Symfony\Component\Validator\Constraints\Range;
-use Symfony\Component\Validator\Constraints\NotNull;
-use Symfony\Component\Validator\Constraints\Collection\Required;
-use Symfony\Component\Validator\Constraints\Collection\Optional;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\CollectionValidator;
+use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Validator\Constraints\Optional;
+use Symfony\Component\Validator\Constraints\Range;
+use Symfony\Component\Validator\Constraints\Required;
 
 abstract class CollectionValidatorTest extends \PHPUnit_Framework_TestCase
 {

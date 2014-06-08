@@ -12,20 +12,24 @@
 namespace Symfony\Bundle\AsseticBundle\Tests;
 
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @group functional
  */
 class FunctionalTest extends \PHPUnit_Framework_TestCase
 {
-    protected $cacheDir;
+    private $cacheDir;
 
     protected function setUp()
     {
         if (!class_exists('Assetic\\AssetManager')) {
             $this->markTestSkipped('Assetic is not available.');
+        }
+
+        if (!class_exists('Symfony\Component\ClassLoader\ClassLoader')) {
+            $this->markTestSkipped('Symfony ClassLoader is not available.');
         }
 
         $this->cacheDir = __DIR__.'/Resources/cache';

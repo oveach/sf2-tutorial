@@ -1,15 +1,25 @@
 <?php
 
+/*
+ * This file is part of the Symfony package.
+ *
+ * (c) Fabien Potencier <fabien@symfony.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Sensio\Bundle\FrameworkExtraBundle\Tests\Templating;
 
 use Sensio\Bundle\FrameworkExtraBundle\Templating\TemplateGuesser;
 use Sensio\Bundle\FrameworkExtraBundle\Tests\Templating\Fixture;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class TemplateGuesserTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Symfony\Component\HttpKernel\KernelInterface
+     * @var KernelInterface
      */
     private $kernel;
 

@@ -25,10 +25,14 @@ class TimeValidator extends ConstraintValidator
     const PATTERN = '/^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/';
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
     {
+        if (!$constraint instanceof Time) {
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Time');
+        }
+
         if (null === $value || '' === $value || $value instanceof \DateTime) {
             return;
         }

@@ -13,11 +13,15 @@
     background-image: -o-linear-gradient(top, #e4e4e4, #ffffff);
     background: linear-gradient(top, #e4e4e4, #ffffff);
 
-    -moz-border-radius: 16px 0 0 0;
-    -webkit-border-radius: 16px 0 0 0;
     border-radius: 16px 0 0 0;
 
     z-index: 6000000;
+}
+
+.sf-toolbarreset * {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
 }
 
 .sf-toolbarreset {
@@ -183,6 +187,7 @@
 .sf-toolbar-block .sf-toolbar-icon > a,
 .sf-toolbar-block .sf-toolbar-icon > span {
     display: block;
+    font-weight: normal;
     text-decoration: none;
     margin: 0;
     padding: 5px 8px;
@@ -195,6 +200,10 @@
 .sf-toolbar-block .sf-toolbar-icon > a:link
 .sf-toolbar-block .sf-toolbar-icon > a:hover {
     color: black !important;
+}
+
+.sf-toolbar-block .sf-toolbar-icon > a[href]:after {
+    content: "";
 }
 
 .sf-toolbar-block .sf-toolbar-icon img {
@@ -287,8 +296,6 @@
         background-image: -o-linear-gradient(135deg, #e4e4e4, #ffffff);
         background: linear-gradient(225deg, #e4e4e4, #ffffff);
 
-        -moz-border-radius: 0 0 0 16px;
-        -webkit-border-radius: 0 0 0 16px;
         border-radius: 0 0 0 16px;
     }
 
@@ -323,10 +330,10 @@
         position: static;
         background: #cbcbcb;
 
-        background-image: -moz-linear-gradient(90deg, #cbcbcb, #e8e8e8); !important;
-        background-image: -webkit-gradient(linear, 0% 0%, 100% 0%, from(#cbcbcb), to(#e8e8e8)); !important;
-        background-image: -o-linear-gradient(180deg, #cbcbcb, #e8e8e8); !important;
-        background: linear-gradient(90deg, #cbcbcb, #e8e8e8); !important;
+        background-image: -moz-linear-gradient(90deg, #cbcbcb, #e8e8e8) !important;
+        background-image: -webkit-gradient(linear, 0% 0%, 100% 0%, from(#cbcbcb), to(#e8e8e8)) !important;
+        background-image: -o-linear-gradient(180deg, #cbcbcb, #e8e8e8) !important;
+        background: linear-gradient(90deg, #cbcbcb, #e8e8e8) !important;
     }
 {% endif %}
 
@@ -363,5 +370,13 @@
 @media screen and (max-width: 1439px) {
     .sf-toolbar-block .sf-toolbar-icon > * > .sf-toolbar-info-piece-additional-detail {
         display: none;
+    }
+}
+
+/***** Media query print: Do not print the Toolbar. *****/
+@media print {
+    .sf-toolbar {
+        display: none;
+        visibility: hidden;
     }
 }

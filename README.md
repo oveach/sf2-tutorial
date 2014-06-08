@@ -57,4 +57,4 @@ Then run the following command to create the schema:
     php app/console doctrine:schema:update --force
     
 ###Test your app
-Browse to http://sf2-tutorial.localhost/app_dev.php
+Browse to http://sf2-tutorial.localhost/app_dev.php/album

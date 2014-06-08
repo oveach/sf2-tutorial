@@ -11,32 +11,20 @@
 
 namespace Symfony\Component\Validator\Tests\Mapping;
 
-use Symfony\Component\Validator\Tests\Fixtures\Entity;
-use Symfony\Component\Validator\Tests\Fixtures\ConstraintA;
-use Symfony\Component\Validator\Mapping\ClassMetadataFactory;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Mapping\ClassMetadataFactory;
 use Symfony\Component\Validator\Mapping\Loader\LoaderInterface;
+use Symfony\Component\Validator\Tests\Fixtures\ConstraintA;
 
 class ClassMetadataFactoryTest extends \PHPUnit_Framework_TestCase
 {
     const CLASSNAME = 'Symfony\Component\Validator\Tests\Fixtures\Entity';
     const PARENTCLASS = 'Symfony\Component\Validator\Tests\Fixtures\EntityParent';
 
-    public function handle($errorNumber, $message, $file, $line, $context)
-    {
-        if ($errorNumber & E_USER_DEPRECATED) {
-            return true;
-        }
-
-        return \PHPUnit_Util_ErrorHandler::handleError($errorNumber, $message, $file, $line);
-    }
-
     public function testLoadClassMetadata()
     {
         $factory = new ClassMetadataFactory(new TestLoader());
-        set_error_handler(array($this, 'handle'));
-        $metadata = $factory->getClassMetadata(self::PARENTCLASS);
-        restore_error_handler();
+        $metadata = $factory->getMetadataFor(self::PARENTCLASS);
 
         $constraints = array(
             new ConstraintA(array('groups' => array('Default', 'EntityParent'))),
@@ -48,9 +36,7 @@ class ClassMetadataFactoryTest extends \PHPUnit_Framework_TestCase
     public function testMergeParentConstraints()
     {
         $factory = new ClassMetadataFactory(new TestLoader());
-        set_error_handler(array($this, 'handle'));
-        $metadata = $factory->getClassMetadata(self::CLASSNAME);
-        restore_error_handler();
+        $metadata = $factory->getMetadataFor(self::CLASSNAME);
 
         $constraints = array(
             new ConstraintA(array('groups' => array(
@@ -90,13 +76,11 @@ class ClassMetadataFactoryTest extends \PHPUnit_Framework_TestCase
               ->will($this->returnValue(false));
         $cache->expects($this->once())
               ->method('write')
-              ->will($this->returnCallback(function($metadata) use ($tester, $constraints) {
+              ->will($this->returnCallback(function ($metadata) use ($tester, $constraints) {
                   $tester->assertEquals($constraints, $metadata->getConstraints());
               }));
 
-        set_error_handler(array($this, 'handle'));
-        $metadata = $factory->getClassMetadata(self::PARENTCLASS);
-        restore_error_handler();
+        $metadata = $factory->getMetadataFor(self::PARENTCLASS);
 
         $this->assertEquals(self::PARENTCLASS, $metadata->getClassName());
         $this->assertEquals($constraints, $metadata->getConstraints());
@@ -121,9 +105,7 @@ class ClassMetadataFactoryTest extends \PHPUnit_Framework_TestCase
               ->method('read')
               ->will($this->returnValue($metadata));
 
-        set_error_handler(array($this, 'handle'));
-        $this->assertEquals($metadata,$factory->getClassMetadata(self::PARENTCLASS));
-        restore_error_handler();
+        $this->assertEquals($metadata,$factory->getMetadataFor(self::PARENTCLASS));
     }
 }
 

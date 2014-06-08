@@ -1,6 +1,15 @@
 <?php
 
-namespace symfony\src\Symfony\Bundle\TwigBundle\Tests\DependencyInjection\Compiler;
+/*
+ * This file is part of the Symfony package.
+ *
+ * (c) Fabien Potencier <fabien@symfony.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Symfony\Bundle\TwigBundle\Tests\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -64,7 +73,7 @@ class TwigLoaderPassTest extends \PHPUnit_Framework_TestCase
 
         $this->pass->process($this->builder);
         $calls = $this->chainLoader->getMethodCalls();
-        $this->assertEquals(2, count($calls));
+        $this->assertCount(2, $calls);
         $this->assertEquals('addLoader', $calls[0][0]);
     }
 

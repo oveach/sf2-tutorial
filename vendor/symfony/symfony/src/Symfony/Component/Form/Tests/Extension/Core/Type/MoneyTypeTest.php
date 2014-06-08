@@ -11,8 +11,19 @@
 
 namespace Symfony\Component\Form\Tests\Extension\Core\Type;
 
-class MoneyTypeTest extends LocalizedTestCase
+use Symfony\Component\Intl\Util\IntlTestHelper;
+
+class MoneyTypeTest extends TypeTestCase
 {
+    protected function setUp()
+    {
+        // we test against different locales, so we need the full
+        // implementation
+        IntlTestHelper::requireFullIntl($this);
+
+        parent::setUp();
+    }
+
     public function testPassMoneyPatternToView()
     {
         \Locale::setDefault('de_DE');
@@ -29,7 +40,7 @@ class MoneyTypeTest extends LocalizedTestCase
 
         $form = $this->factory->create('money', null, array('currency' => 'JPY'));
         $view = $form->createView();
-        $this->assertTrue((Boolean) strstr($view->vars['money_pattern'], '¥'));
+        $this->assertTrue((bool) strstr($view->vars['money_pattern'], '¥'));
     }
 
     // https://github.com/symfony/symfony/issues/5458

@@ -12,8 +12,8 @@
 namespace Symfony\Bundle\AsseticBundle\Tests\DependencyInjection;
 
 use Symfony\Bundle\AsseticBundle\DependencyInjection\AsseticExtension;
-use Symfony\Bundle\AsseticBundle\DependencyInjection\Compiler\CheckYuiFilterPass;
 use Symfony\Bundle\AsseticBundle\DependencyInjection\Compiler\CheckClosureFilterPass;
+use Symfony\Bundle\AsseticBundle\DependencyInjection\Compiler\CheckYuiFilterPass;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -44,6 +44,10 @@ class AsseticExtensionTest extends \PHPUnit_Framework_TestCase
     {
         if (!class_exists('Assetic\\AssetManager')) {
             $this->markTestSkipped('Assetic is not available.');
+        }
+
+        if (!class_exists('Twig_Environment')) {
+            $this->markTestSkipped('Twig is not available.');
         }
 
         $this->kernel = $this->getMock('Symfony\\Component\\HttpKernel\\KernelInterface');
@@ -126,6 +130,7 @@ class AsseticExtensionTest extends \PHPUnit_Framework_TestCase
             array('scssphp', array('compass' => true)),
             array('sprockets', array('include_dirs' => array('foo'))),
             array('stylus'),
+            array('typescript'),
             array('uglifycss'),
             array('uglifyjs'),
             array('uglifyjs2'),

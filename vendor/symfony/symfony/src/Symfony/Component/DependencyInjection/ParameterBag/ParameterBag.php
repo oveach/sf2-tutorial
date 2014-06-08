@@ -24,8 +24,8 @@ use Symfony\Component\DependencyInjection\Exception\RuntimeException;
  */
 class ParameterBag implements ParameterBagInterface
 {
-    protected $parameters;
-    protected $resolved;
+    protected $parameters = array();
+    protected $resolved = false;
 
     /**
      * Constructor.
@@ -36,9 +36,7 @@ class ParameterBag implements ParameterBagInterface
      */
     public function __construct(array $parameters = array())
     {
-        $this->parameters = array();
         $this->add($parameters);
-        $this->resolved = false;
     }
 
     /**
@@ -93,7 +91,19 @@ class ParameterBag implements ParameterBagInterface
         $name = strtolower($name);
 
         if (!array_key_exists($name, $this->parameters)) {
-            throw new ParameterNotFoundException($name);
+            if (!$name) {
+                throw new ParameterNotFoundException($name);
+            }
+
+            $alternatives = array();
+            foreach (array_keys($this->parameters) as $key) {
+                $lev = levenshtein($name, $key);
+                if ($lev <= strlen($name) / 3 || false !== strpos($key, $name)) {
+                    $alternatives[] = $key;
+                }
+            }
+
+            throw new ParameterNotFoundException($name, null, null, null, $alternatives);
         }
 
         return $this->parameters[$name];
@@ -117,7 +127,7 @@ class ParameterBag implements ParameterBagInterface
      *
      * @param string $name The parameter name
      *
-     * @return Boolean true if the parameter name is defined, false otherwise
+     * @return bool    true if the parameter name is defined, false otherwise
      *
      * @api
      */
@@ -254,7 +264,7 @@ class ParameterBag implements ParameterBagInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function escapeValue($value)
     {

@@ -28,10 +28,14 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 class ChoiceValidator extends ConstraintValidator
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
     {
+        if (!$constraint instanceof Choice) {
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Choice');
+        }
+
         if (!$constraint->choices && !$constraint->callback) {
             throw new ConstraintDefinitionException('Either "choices" or "callback" must be specified on constraint Choice');
         }

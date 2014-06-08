@@ -4,9 +4,7 @@
         <meta charset="UTF-8" />
         <title>{% if title %}{{ title }} - {% endif %}SF2 Tutorial</title>
         <link rel="icon" sizes="16x16" href="{{ asset('favicon.ico') }}" />
-        {% stylesheets
-            '@TutoAlbumBundle/Resources/public/css/*'
-        %}
+        {% stylesheets 'bundles/tutoalbum/css/*' filter='cssrewrite' %}
         <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
     </head>

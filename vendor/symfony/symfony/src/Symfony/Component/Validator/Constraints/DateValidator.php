@@ -25,10 +25,14 @@ class DateValidator extends ConstraintValidator
     const PATTERN = '/^(\d{4})-(\d{2})-(\d{2})$/';
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
     {
+        if (!$constraint instanceof Date) {
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Date');
+        }
+
         if (null === $value || '' === $value || $value instanceof \DateTime) {
             return;
         }

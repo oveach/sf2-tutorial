@@ -1,14 +1,24 @@
 <?php
 
+/*
+ * This file is part of the Symfony package.
+ *
+ * (c) Fabien Potencier <fabien@symfony.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Sensio\Bundle\FrameworkExtraBundle\Tests\Request\ParamConverter;
 
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\DoctrineParamConverter;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 class DoctrineParamConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Doctrine\Common\Persistence\ManagerRegistry
+     * @var ManagerRegistry
      */
     private $registry;
 
@@ -79,6 +89,37 @@ class DoctrineParamConverterTest extends \PHPUnit_Framework_TestCase
         $ret = $this->converter->apply($request, $config);
 
         $this->assertTrue($ret);
+        $this->assertNull($request->attributes->get('arg'));
+    }
+
+    public function testApplyWithStripNulls()
+    {
+        $request = new Request();
+        $request->attributes->set('arg', null);
+        $config = $this->createConfiguration('stdClass', array('mapping' => array('arg' => 'arg'), 'strip_null' => true), 'arg', true);
+
+        $classMetadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $manager->expects($this->once())
+            ->method('getClassMetadata')
+            ->with('stdClass')
+            ->will($this->returnValue($classMetadata));
+
+        $manager->expects($this->never())
+            ->method('getRepository');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with('stdClass')
+            ->will($this->returnValue($manager));
+
+        $classMetadata->expects($this->once())
+            ->method('hasField')
+            ->with($this->equalTo('arg'))
+            ->will($this->returnValue(true));
+
+        $this->converter->apply($request, $config);
+
         $this->assertNull($request->attributes->get('arg'));
     }
 

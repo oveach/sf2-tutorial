@@ -1,4 +1,4 @@
-<script type="text/javascript">/*<![CDATA[*/
+<script>/*<![CDATA[*/
     Sfjs = (function() {
         "use strict";
 
@@ -9,12 +9,26 @@
             request = function(url, onSuccess, onError, payload, options) {
                 var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
                 options = options || {};
+                options.maxTries = options.maxTries || 0;
                 xhr.open(options.method || 'GET', url, true);
                 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
                 xhr.onreadystatechange = function(state) {
-                    if (4 === xhr.readyState && 200 === xhr.status) {
+                    if (4 !== xhr.readyState) {
+                        return null;
+                    }
+
+                    if (xhr.status == 404 && options.maxTries > 1) {
+                        setTimeout(function(){
+                            options.maxTries--;
+                            request(url, onSuccess, onError, payload, options);
+                        }, 500);
+
+                        return null;
+                    }
+
+                    if (200 === xhr.status) {
                         (onSuccess || noop)(xhr);
-                    } else if (4 === xhr.readyState && xhr.status != 200) {
+                    } else {
                         (onError || noop)(xhr);
                     }
                 };
@@ -22,15 +36,19 @@
             },
 
             hasClass = function(el, klass) {
-                return el.className.match(new RegExp('\\b' + klass + '\\b'));
+                return el.className && el.className.match(new RegExp('\\b' + klass + '\\b'));
             },
 
             removeClass = function(el, klass) {
-                el.className = el.className.replace(new RegExp('\\b' + klass + '\\b'), ' ');
+                if (el.className) {
+                    el.className = el.className.replace(new RegExp('\\b' + klass + '\\b'), ' ');
+                }
             },
 
             addClass = function(el, klass) {
-                if (!hasClass(el, klass)) { el.className += " " + klass; }
+                if (!hasClass(el, klass)) {
+                    el.className += " " + klass;
+                }
             },
 
             getPreference = function(name) {
@@ -75,6 +93,7 @@
                             (onSuccess || noop)(xhr, el);
                         },
                         function(xhr) { (onError || noop)(xhr, el); },
+                        '',
                         options
                     );
                 }

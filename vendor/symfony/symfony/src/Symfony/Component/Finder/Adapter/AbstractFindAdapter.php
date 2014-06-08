@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\Finder\Adapter;
 
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\Finder\Iterator;
 use Symfony\Component\Finder\Shell\Shell;
 use Symfony\Component\Finder\Expression\Expression;
@@ -91,6 +92,13 @@ abstract class AbstractFindAdapter extends AbstractAdapter
             $this->buildSorting($command, $this->sort);
         }
 
+        $command->setErrorHandler(
+            $this->ignoreUnreadableDirs
+                // If directory is unreadable and finder is set to ignore it, `stderr` is ignored.
+                ? function ($stderr) { return; }
+                : function ($stderr) { throw new AccessDeniedException($stderr); }
+        );
+
         $paths = $this->shell->testCommand('uniq') ? $command->add('| uniq')->execute() : array_unique($command->execute());
         $iterator = new Iterator\FilePathsIterator($paths, $dir);
 
@@ -140,7 +148,7 @@ abstract class AbstractFindAdapter extends AbstractAdapter
     /**
      * @param Command  $command
      * @param string[] $names
-     * @param Boolean  $not
+     * @param bool     $not
      */
     private function buildNamesFiltering(Command $command, array $names, $not = false)
     {
@@ -188,7 +196,7 @@ abstract class AbstractFindAdapter extends AbstractAdapter
      * @param Command  $command
      * @param string   $dir
      * @param string[] $paths
-     * @param Boolean  $not
+     * @param bool     $not
      */
     private function buildPathsFiltering(Command $command, $dir, array $paths, $not = false)
     {
@@ -237,20 +245,20 @@ abstract class AbstractFindAdapter extends AbstractAdapter
 
             switch ($size->getOperator()) {
                 case '<=':
-                    $command->add('-size -' . ($size->getTarget() + 1) . 'c');
+                    $command->add('-size -'.($size->getTarget() + 1).'c');
                     break;
                 case '>=':
-                    $command->add('-size +'. ($size->getTarget() - 1) . 'c');
+                    $command->add('-size +'. ($size->getTarget() - 1).'c');
                     break;
                 case '>':
-                    $command->add('-size +' . $size->getTarget() . 'c');
+                    $command->add('-size +'.$size->getTarget().'c');
                     break;
                 case '!=':
-                    $command->add('-size -' . $size->getTarget() . 'c');
-                    $command->add('-size +' . $size->getTarget() . 'c');
+                    $command->add('-size -'.$size->getTarget().'c');
+                    $command->add('-size +'.$size->getTarget().'c');
                 case '<':
                 default:
-                    $command->add('-size -' . $size->getTarget() . 'c');
+                    $command->add('-size -'.$size->getTarget().'c');
             }
         }
     }
@@ -275,20 +283,20 @@ abstract class AbstractFindAdapter extends AbstractAdapter
 
             switch ($date->getOperator()) {
                 case '<=':
-                    $command->add('-mmin +' . ($mins - 1));
+                    $command->add('-mmin +'.($mins - 1));
                     break;
                 case '>=':
-                    $command->add('-mmin -' . ($mins + 1));
+                    $command->add('-mmin -'.($mins + 1));
                     break;
                 case '>':
-                    $command->add('-mmin -' . $mins);
+                    $command->add('-mmin -'.$mins);
                     break;
                 case '!=':
-                    $command->add('-mmin +' . $mins.' -or -mmin -' . $mins);
+                    $command->add('-mmin +'.$mins.' -or -mmin -'.$mins);
                     break;
                 case '<':
                 default:
-                    $command->add('-mmin +' . $mins);
+                    $command->add('-mmin +'.$mins);
             }
         }
     }
@@ -313,7 +321,7 @@ abstract class AbstractFindAdapter extends AbstractAdapter
     /**
      * @param Command $command
      * @param array   $contains
-     * @param Boolean $not
+     * @param bool    $not
      */
     abstract protected function buildContentFiltering(Command $command, array $contains, $not = false);
 }

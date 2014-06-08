@@ -26,7 +26,7 @@ class PropelTypeGuesser implements FormTypeGuesserInterface
     private $cache = array();
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function guessType($class, $property)
     {
@@ -35,11 +35,18 @@ class PropelTypeGuesser implements FormTypeGuesserInterface
         }
 
         foreach ($table->getRelations() as $relation) {
-            if (in_array($relation->getType(), array(\RelationMap::MANY_TO_ONE, \RelationMap::ONE_TO_MANY))) {
-                if ($property == $relation->getForeignTable()->getName()) {
+            if ($relation->getType() === \RelationMap::MANY_TO_ONE) {
+                if (strtolower($property) === strtolower($relation->getName())) {
                     return new TypeGuess('model', array(
                         'class'    => $relation->getForeignTable()->getClassName(),
-                        'multiple' => \RelationMap::MANY_TO_ONE === $relation->getType() ? false : true,
+                        'multiple' => false,
+                    ), Guess::HIGH_CONFIDENCE);
+                }
+            } elseif ($relation->getType() === \RelationMap::ONE_TO_MANY) {
+                if (strtolower($property) === strtolower($relation->getPluralName())) {
+                    return new TypeGuess('model', array(
+                        'class'    => $relation->getForeignTable()->getClassName(),
+                        'multiple' => true,
                     ), Guess::HIGH_CONFIDENCE);
                 }
             } elseif ($relation->getType() === \RelationMap::MANY_TO_MANY) {
@@ -101,7 +108,7 @@ class PropelTypeGuesser implements FormTypeGuesserInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function guessRequired($class, $property)
     {
@@ -111,7 +118,7 @@ class PropelTypeGuesser implements FormTypeGuesserInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function guessMaxLength($class, $property)
     {
@@ -130,15 +137,7 @@ class PropelTypeGuesser implements FormTypeGuesserInterface
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function guessMinLength($class, $property)
-    {
-        trigger_error('guessMinLength() is deprecated since version 2.1 and will be removed in 2.3.', E_USER_DEPRECATED);
-    }
-
-    /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function guessPattern($class, $property)
     {
@@ -176,6 +175,10 @@ class PropelTypeGuesser implements FormTypeGuesserInterface
 
         if ($table && $table->hasColumn($property)) {
             return $this->cache[$class.'::'.$property] = $table->getColumn($property);
+        }
+
+        if ($table && $table->hasColumnByInsensitiveCase($property)) {
+            return $this->cache[$class.'::'.$property] = $table->getColumnByInsensitiveCase($property);
         }
     }
 }

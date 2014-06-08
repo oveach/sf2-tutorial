@@ -11,8 +11,8 @@
 
 namespace Symfony\Bundle\AsseticBundle\DependencyInjection;
 
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
@@ -119,6 +119,16 @@ class AsseticExtension extends Extension
         }
 
         $container->setParameter('assetic.bundles', $config['bundles']);
+
+        $this->addClassesToCompile(array(
+            'Symfony\\Bundle\\AsseticBundle\\DefaultValueSupplier',
+            'Symfony\\Bundle\\AsseticBundle\\Factory\\AssetFactory',
+            /* This will introduce hard dependency on Twig
+            'Assetic\\Extension\\Twig\\AsseticExtension',
+            'Assetic\\Extension\\Twig\\ValueContainer',
+            'Symfony\\Bundle\\AsseticBundle\\Twig\\AsseticExtension',
+            */
+        ));
     }
 
     /**

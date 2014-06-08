@@ -13,6 +13,7 @@ namespace Symfony\Component\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
@@ -22,10 +23,14 @@ use Symfony\Component\Validator\ConstraintValidator;
 class FalseValidator extends ConstraintValidator
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
     {
+        if (!$constraint instanceof False) {
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\False');
+        }
+
         if (null === $value || false === $value || 0 === $value || '0' === $value) {
             return;
         }

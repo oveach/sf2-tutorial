@@ -26,10 +26,14 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 class RegexValidator extends ConstraintValidator
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
     {
+        if (!$constraint instanceof Regex) {
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Regex');
+        }
+
         if (null === $value || '' === $value) {
             return;
         }

@@ -90,6 +90,18 @@ class Stopwatch
     }
 
     /**
+     * Checks if the event was started
+     *
+     * @param string $name The event name
+     *
+     * @return bool
+     */
+    public function isStarted($name)
+    {
+        return end($this->activeSections)->isEventStarted($name);
+    }
+
+    /**
      * Stops an event.
      *
      * @param string $name The event name
@@ -111,6 +123,18 @@ class Stopwatch
     public function lap($name)
     {
         return end($this->activeSections)->stopEvent($name)->start();
+    }
+
+    /**
+     * Returns a specific event by name
+     *
+     * @param string $name The event name
+     *
+     * @return StopwatchEvent A StopwatchEvent instance
+     */
+    public function getEvent($name)
+    {
+        return end($this->activeSections)->getEvent($name);
     }
 
     /**
@@ -178,8 +202,6 @@ class Section
                 return $child;
             }
         }
-
-        return null;
     }
 
     /**
@@ -238,6 +260,18 @@ class Section
     }
 
     /**
+     * Checks if the event was started
+     *
+     * @param string $name The event name
+     *
+     * @return bool
+     */
+    public function isEventStarted($name)
+    {
+        return isset($this->events[$name]) && $this->events[$name]->isStarted();
+    }
+
+    /**
      * Stops an event.
      *
      * @param string $name The event name
@@ -267,6 +301,24 @@ class Section
     public function lap($name)
     {
         return $this->stopEvent($name)->start();
+    }
+
+    /**
+     * Returns a specific event by name
+     *
+     * @param string $name The event name
+     *
+     * @return StopwatchEvent The event
+     *
+     * @throws \LogicException When the event is not known
+     */
+    public function getEvent($name)
+    {
+        if (!isset($this->events[$name])) {
+            throw new \LogicException(sprintf('Event "%s" is not known.', $name));
+        }
+
+        return $this->events[$name];
     }
 
     /**

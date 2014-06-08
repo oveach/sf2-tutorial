@@ -1,12 +1,5 @@
 <?php
 
-namespace Sensio\Bundle\FrameworkExtraBundle\EventListener;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterManager;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-
 /*
  * This file is part of the Symfony framework.
  *
@@ -16,26 +9,39 @@ use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
  * with this source code in the file LICENSE.
  */
 
+namespace Sensio\Bundle\FrameworkExtraBundle\EventListener;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterManager;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
 /**
- * The ParamConverterListener handles the @ParamConverter annotation.
+ * The ParamConverterListener handles the ParamConverter annotation.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ParamConverterListener
+class ParamConverterListener implements EventSubscriberInterface
 {
     /**
-     * @var Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterManager
+     * @var ParamConverterManager
      */
     protected $manager;
+
+    protected $autoConvert;
 
     /**
      * Constructor.
      *
-     * @param ParamConverterManager $manager A ParamConverterManager instance
+     * @param ParamConverterManager $manager     A ParamConverterManager instance
+     * @param bool                  $autoConvert Auto convert non-configured objects
      */
-    public function __construct(ParamConverterManager $manager)
+    public function __construct(ParamConverterManager $manager, $autoConvert = true)
     {
         $this->manager = $manager;
+        $this->autoConvert = $autoConvert;
     }
 
     /**
@@ -62,6 +68,15 @@ class ParamConverterListener
         }
 
         // automatically apply conversion for non-configured objects
+        if ($this->autoConvert) {
+            $configurations = $this->autoConfigure($r, $request, $configurations);
+        }
+
+        $this->manager->apply($request, $configurations);
+    }
+
+    private function autoConfigure(\ReflectionFunctionAbstract $r, Request $request, $configurations)
+    {
         foreach ($r->getParameters() as $param) {
             if (!$param->getClass() || $param->getClass()->isInstance($request)) {
                 continue;
@@ -82,6 +97,18 @@ class ParamConverterListener
             $configurations[$name]->setIsOptional($param->isOptional());
         }
 
-        $this->manager->apply($request, $configurations);
+        return $configurations;
+    }
+
+    /**
+     * Get subscribed events
+     *
+     * @return array Subscribed events
+     */
+    public static function getSubscribedEvents()
+    {
+        return array(
+            KernelEvents::CONTROLLER => 'onKernelController',
+        );
     }
 }

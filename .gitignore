@@ -13,3 +13,16 @@ Thumbs.db
 
 # to keep empty directories in the repository, place an empty '.gitkeep' file inside it
 !.gitkeep
+
+# original symfony .gitignore:
+#/web/bundles/
+#/app/bootstrap.php.cache
+#/app/cache/*
+#/app/config/parameters.yml
+#/app/logs/*
+#!app/cache/.gitkeep
+#!app/logs/.gitkeep
+#/build/
+#/vendor/
+#/bin/
+#/composer.phar

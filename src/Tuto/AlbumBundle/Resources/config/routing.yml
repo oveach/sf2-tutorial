@@ -1,6 +1,6 @@
 #tuto_album_homepage:
-#    pattern:  /
-#    defaults: { _controller: TutoAlbumBundle:Album:index }
+#    pattern:  /hello/{name}
+#    defaults: { _controller: TutoAlbumBundle:Default:index }
 
 tuto_album:
     resource: "@TutoAlbumBundle/Controller/AlbumController.php"
