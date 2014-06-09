@@ -11,7 +11,6 @@ class AlbumType extends AbstractType
     {
         $builder->add('title', 'text', array('label' => "Title"));
         $builder->add('artist', 'text', array('label' => "Artist"));
-        $builder->add('id', 'hidden');
     }
 
     public function getName()

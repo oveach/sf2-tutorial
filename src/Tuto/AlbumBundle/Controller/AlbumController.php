@@ -57,6 +57,7 @@ class AlbumController extends Controller
         
         return array(
             'form' => $form->createView(),
+            'id' => $id,
             'submitValue' => $submitValue,
             'title' => $title,
         );
