@@ -5,7 +5,7 @@ namespace Tuto\AlbumBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 // these import the "@Route" and "@Template" annotations
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+// use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Tuto\AlbumBundle\Entity\Album;
@@ -15,7 +15,7 @@ use Tuto\AlbumBundle\Form\AlbumType;
 class AlbumController extends Controller
 {
     /**
-     * @Route("/album", name="_index")
+     * _Route("/album", name="_index")
      * @Template()
      */
     public function indexAction()
@@ -26,7 +26,7 @@ class AlbumController extends Controller
     }
     
     /**
-     * @Route("/album/edit/{id}", requirements={"id" = "\d+"}, defaults={"id" = null}, name="_edit")
+     * _Route("/album/edit/{id}", requirements={"id" = "\d+"}, defaults={"id" = null}, name="_edit")
      * @Template()
      */
     public function editAction($id, Request $request)
@@ -65,7 +65,7 @@ class AlbumController extends Controller
     }
 
     /**
-     * @Route("/album/delete/{id}", requirements={"id" = "\d+"}, name="_delete")
+     * _Route("/album/delete/{id}", requirements={"id" = "\d+"}, name="_delete")
      * @Template()
      */
     public function deleteAction($id, Request $request)

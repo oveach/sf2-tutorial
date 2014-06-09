@@ -1,7 +1,23 @@
-#tuto_album_homepage:
-#    pattern:  /hello/{name}
-#    defaults: { _controller: TutoAlbumBundle:Default:index }
+_index:
+    path:  /album
+    defaults: { _controller: TutoAlbumBundle:Album:index }
 
-tuto_album:
-    resource: "@TutoAlbumBundle/Controller/AlbumController.php"
-    type:     annotation
+_edit:
+    path: /album/edit/{id}
+    defaults:
+        _controller: TutoAlbumBundle:Album:edit
+        id: null
+    requirements:
+        id: \d+
+
+_delete:
+    path: /album/delete/{id}
+    defaults:
+        _controller: TutoAlbumBundle:Album:delete
+    requirements:
+        id: \d+
+
+# to use annotations, comment the routes definitions and uncomment this:
+#tuto_album:
+#    resource: "@TutoAlbumBundle/Controller/AlbumController.php"
+#    type:     annotation
