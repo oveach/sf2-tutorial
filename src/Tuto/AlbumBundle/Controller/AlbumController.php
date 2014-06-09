@@ -47,14 +47,12 @@ class AlbumController extends Controller
         
         $form = $this->createForm(new AlbumType(), $album);
         
-        if ($request->getMethod() == 'POST') {
-            $form->bind($request);
-            if ($form->isValid()) {
-                $em->persist($album);
-                $em->flush();
-                $this->get('session')->getFlashBag()->add('notice', "Album saved successfully");
-                return $this->redirect($this->generateUrl("_index"));
-            }
+        $form->handleRequest($request);   // determine automatically if form is submitted
+        if ($form->isValid()) {           // false if not submitted
+            $em->persist($album);
+            $em->flush();
+            $this->get('session')->getFlashBag()->add('notice', "Album saved successfully");
+            return $this->redirect($this->generateUrl("_index"));
         }
         
         return array(
